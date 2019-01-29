@@ -1,0 +1,299 @@
+{
+  "tintal" : {
+    "name": "तीनताल",
+    "nameTrans": "tīntāl",
+    "avart": 16,
+    "tempoInit": 100,
+    "theka": [
+      {
+        "matra": 0,
+        "vibhag": 1.1,
+        "bol": "dha"
+      },
+      {
+        "matra": 1,
+        "vibhag": 1.2,
+        "bol": "dhin"
+      },
+      {
+        "matra": 2,
+        "vibhag": 1.3,
+        "bol": "dhin"
+      },
+      {
+        "matra": 3,
+        "vibhag": 1.4,
+        "bol": "dha"
+      },
+      {
+        "matra": 4,
+        "vibhag": 2.1,
+        "bol": "dha"
+      },
+      {
+        "matra": 5,
+        "vibhag": 2.2,
+        "bol": "dhin"
+      },
+      {
+        "matra": 6,
+        "vibhag": 2.3,
+        "bol": "dhin"
+      },
+      {
+        "matra": 7,
+        "vibhag": 2.4,
+        "bol": "dha"
+      },
+      {
+        "matra": 8,
+        "vibhag": 0.1,
+        "bol": "dha"
+      },
+      {
+        "matra": 9,
+        "vibhag": 0.2,
+        "bol": "tin"
+      },
+      {
+        "matra": 10,
+        "vibhag": 0.3,
+        "bol": "tin"
+      },
+      {
+        "matra": 11,
+        "vibhag": 0.4,
+        "bol": "ta"
+      },
+      {
+        "matra": 12,
+        "vibhag": 4.1,
+        "bol": "ta"
+      },
+      {
+        "matra": 13,
+        "vibhag": 4.2,
+        "bol": "dhin"
+      },
+      {
+        "matra": 14,
+        "vibhag": 4.3,
+        "bol": "dhin"
+      },
+      {
+        "matra": 15,
+        "vibhag": 4.4,
+        "bol": "dha"
+      }
+    ]
+  },
+  "ektal": {
+    "name": "एकताल",
+    "nameTrans": "ektāl",
+    "avart": 12,
+    "tempoInit": 50,
+    "theka": [
+      {
+        "matra": 0,
+        "vibhag": 1.1,
+        "bol": "dhin"
+      },
+      {
+        "matra": 1,
+        "vibhag": 1.2,
+        "bol": "dhin"
+      },
+      {
+        "matra": 2,
+        "vibhag": 0.1,
+        "bol": "dha"
+      },
+      {
+        "matra": 2.5,
+        "vibhag": 0.15,
+        "bol": "ge"
+      },
+      {
+        "matra": 3,
+        "vibhag": 0.2,
+        "bol": "ti"
+      },
+      {
+        "matra": 3.25,
+        "vibhag": 0.225,
+        "bol": "ra"
+      },
+      {
+        "matra": 3.5,
+        "vibhag": 0.25,
+        "bol": "ki"
+      },
+      {
+        "matra": 3.75,
+        "vibhag": 0.275,
+        "bol": "te"
+      },
+      {
+        "matra": 4,
+        "vibhag": 3.1,
+        "bol": "tun"
+      },
+      {
+        "matra": 5,
+        "vibhag": 3.2,
+        "bol": "na"
+      },
+      {
+        "matra": 6,
+        "vibhag": 0.1,
+        "bol": "kat"
+      },
+      {
+        "matra": 7,
+        "vibhag": 0.2,
+        "bol": "tin"
+      },
+      {
+        "matra": 8,
+        "vibhag": 5.1,
+        "bol": "dha"
+      },
+      {
+        "matra": 8.5,
+        "vibhag": 5.15,
+        "bol": "ge"
+      },
+      {
+        "matra": 9,
+        "vibhag": 5.2,
+        "bol": "ti"
+      },
+      {
+        "matra": 9.25,
+        "vibhag": 5.225,
+        "bol": "ra"
+      },
+      {
+        "matra": 9.5,
+        "vibhag": 5.25,
+        "bol": "ki"
+      },
+      {
+        "matra": 9.75,
+        "vibhag": 5.275,
+        "bol": "te"
+      },
+      {
+        "matra": 10,
+        "vibhag": 6.1,
+        "bol": "dhin"
+      },
+      {
+        "matra": 11,
+        "vibhag": 6.2,
+        "bol": "na"
+      }
+    ]
+  },
+  "jhaptal": {
+    "name": "झपताल",
+    "nameTrans": "jhaptāl",
+    "avart": 10,
+    "tempoInit": 100,
+    "theka": [
+      {
+        "matra": 0,
+        "vibhag": 1.1,
+        "bol": "dhin"
+      },
+      {
+        "matra": 1,
+        "vibhag": 1.2,
+        "bol": "na"
+      },
+      {
+        "matra": 2,
+        "vibhag": 2.1,
+        "bol": "dhin"
+      },
+      {
+        "matra": 3,
+        "vibhag": 2.2,
+        "bol": "dhin"
+      },
+      {
+        "matra": 4,
+        "vibhag": 2.3,
+        "bol": "na"
+      },
+      {
+        "matra": 5,
+        "vibhag": 0.1,
+        "bol": "tin"
+      },
+      {
+        "matra": 6,
+        "vibhag": 0.2,
+        "bol": "na"
+      },
+      {
+        "matra": 7,
+        "vibhag": 4.1,
+        "bol": "dhin"
+      },
+      {
+        "matra": 8,
+        "vibhag": 4.2,
+        "bol": "dhin"
+      },
+      {
+        "matra": 9,
+        "vibhag": 4.3,
+        "bol": "na"
+      }
+    ]
+  },
+  "rupak tal": {
+    "name": "रूपक ताल",
+    "nameTrans": "rūpak tāl",
+    "avart": 7,
+    "tempoInit": 100,
+    "theka": [
+      {
+        "matra": 0,
+        "vibhag": 0.1,
+        "bol": "tin"
+      },
+      {
+        "matra": 1,
+        "vibhag": 0.2,
+        "bol": "tin"
+      },
+      {
+        "matra": 2,
+        "vibhag": 0.3,
+        "bol": "na"
+      },
+      {
+        "matra": 3,
+        "vibhag": 1.1,
+        "bol": "dhin"
+      },
+      {
+        "matra": 4,
+        "vibhag": 1.2,
+        "bol": "na"
+      },
+      {
+        "matra": 5,
+        "vibhag": 2.1,
+        "bol": "dhin"
+      },
+      {
+        "matra": 6,
+        "vibhag": 2.2,
+        "bol": "na"
+      }
+    ]
+  }
+}
