@@ -105,7 +105,7 @@ function setup () {
   talRadius = (cursorBottom-cursorTop)/2.8;// (mainSpace-2*margin)*0.25;
   melCursorX = extraSpaceW + (mainSpace-2*margin)*0.75;
 
-  infoLink = select("#info-link");
+  infoLink = select("#sa-info-link");
   infoLink.position(width-60, extraSpaceH + margin*3.5 + 30);
   selectMenu = createSelect()
     .size(120, 25)

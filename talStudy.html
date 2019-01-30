@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="es">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laboratorio de tāl</title>
+    <link href="style.css" type="text/css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Laila:300,400,500,600,700&amp;subset=devanagari,latin-ext" rel="stylesheet">
-    <style> body {padding: 0; margin: 0; font-family: 'Laila', serif;} </style>
     <script src="scripts/p5.min.js"></script>
     <script src="scripts/p5.dom.min.js"></script>
     <script src="scripts/p5.sound.min.js"></script>
@@ -13,9 +13,21 @@
   </head>
   <body>
     <nav>
-      <a href="index.html">Home</a>
+      <a href="index.html">Inicio</a>
     </nav>
-    <h2>Laboratorio de tāl</h2>
-    <div id="sketch-holder"></div>
+    <main>
+      <h2>Laboratorio de tāl</h2>
+      <p>Este "laboratorio" permite diseccionar, explorar e interactuar con algunos de los tāls más representativos de la música clásica indostana. Para ello, sigue los siguientes pasos:</p>
+      <ol>
+        <li>Para empezar, elige un tāl en el menú desplegable. El número entre paréntesis indica la cantidad de <i>matras</i> de cada tāl. Una vez elegido, aparecerá el ciclo del correspondiente tāl en forma de circunferencia. Cada círculo a lo largo de esta circunferencia representa un <i>matra</i>, siendo el de arriba el correspondiente al <i>sam</i>. Los círculos grandes indican el inicio de un <i>vibhāg</i> y va acompañado de un gesto de la mano. Los círculos rellenos de color indican <i>tālī</i> y los vacíos indican <i>khālī</i>. El icono <img id="icon" src="images/clap.svg" alt="palmada"> indica que su correspondiente <i>matra</i> se marca con una palmada, y el icono <img id="icon" src="images/wave.svg" alt="palma hacia arriba"> indica que su correspondiente <i>matra</i> se marca con volviendo la palma de la mano hacia arriba.</li>
+        <li>Las sílabas a lo largo de la circunferencia del tāl indican el <i>bol</i> que interpreta el tablā en esa posición del tāl. Se puede escuhar el correspondiente sonido del tablā haciendo click en cada <i>bol</i>.</li>
+        <li>Para escuhar el <i>ṭhekā</i> completo del tāl pulsa el botón "¡Comienza!". Un cursor rojo a lo largo de la circunferencia del tāl indica el progreso del mismo. Una sombra de color creciente irá indicando la tensión métrica que va creando el tāl en su progreso, y su resolución cuando vuelve a alcanzar el <i>sam</i> Con el SLIDER de abajo se puede ajustar la cantidad de "mpm" o <i>matras</i> por minuto. Para volver a escuchar el sonido de cada <i>bol</i> es necesario pausar la reproducción del tāl.</li>
+        <li>A medida que te vayas familiarizando con la estructura del tal, puedes ir deseleccionando las opciones "<i>ṭhekā</i>", para dejar de ver los <i>bols</i>, "cursor", para dejar de ver el cursor rojo, y "tāl", para dejar de ver los <i>matras</i>.</li>
+      </ol>
+      <div id="sketch-holder"></div>
+    </main>
+    <footer>
+      <span><a href="https://www.upf.edu/web/musicalbridges">Musical Bridges</a></span>
+    </footer>
   </body>
 </html>
