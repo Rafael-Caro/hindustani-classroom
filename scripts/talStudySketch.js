@@ -211,7 +211,7 @@ function start() {
 
   // var talSortName = select.value().substring(0, select.value().indexOf("tāl")+"tāl".length);
   var tal = talInfo[talMenu[select.value()]];
-  talName = tal.name + "\n" + tal.name;
+  talName = tal.name + "\n" + tal.nameTrans;
   avart = tal.avart;
   var tempoInit = tal.tempoInit;
   var theka = tal.theka;
