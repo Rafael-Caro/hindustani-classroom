@@ -309,7 +309,6 @@ function back () {
     showTal.attribute("hidden", "true");
   }
   step --;
-  print(step);
   if (step == 0) {
     backButton.attribute("disabled", "true");
   }
