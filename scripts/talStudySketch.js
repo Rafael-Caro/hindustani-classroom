@@ -45,7 +45,6 @@ var ti;
 var tin;
 var tun;
 var soundDic = {};
-var strokePlayPoints = [];
 var strokeToPlay = 0;
 // Icons
 var wave;
@@ -199,7 +198,7 @@ function start() {
   //restart values
   strokeCircles = [];
   icons = [];
-  strokePlayPoints = [];
+  // strokePlayPoints = [];
   cursorX = 0;
   cursorY = -radiusBig;
   var angle = 0;
@@ -209,7 +208,6 @@ function start() {
   }
   playing = false;
 
-  // var talSortName = select.value().substring(0, select.value().indexOf("tāl")+"tāl".length);
   var tal = talInfo[talMenu[select.value()]];
   talName = tal.name + "\n" + tal.nameTrans;
   avart = tal.avart;
@@ -241,11 +239,6 @@ function start() {
     var bol = stroke["bol"];
     var strokeCircle = new CreateStrokeCircle(matra, vibhag, circleType, bol);
     strokeCircles[i] = strokeCircle;
-    if (strokeCircle.circleAngle < 0) {
-      strokePlayPoints[i] = 360 + strokeCircle.circleAngle;
-    } else {
-      strokePlayPoints[i] = strokeCircle.circleAngle;
-    }
   }
   slider.value(tempoInit);
   showTheka.removeAttribute("disabled");
@@ -262,6 +255,7 @@ function start() {
 
 function CreateStrokeCircle (matra, vibhag, circleType, bol) {
   this.bol = bol;
+  this.sound = soundDic[this.bol]
   var increment = 1;
   this.strokeWeight = 2;
   this.txtW = 0;
@@ -283,14 +277,17 @@ function CreateStrokeCircle (matra, vibhag, circleType, bol) {
     this.txtSize = radius1 * 0.7;
     this.txtStyle = BOLD;
     this.bol = this.bol.toUpperCase();
+    this.volume = 1;
   } else if (circleType == 1) {
     this.radius = radius1;
     this.txtSize = radius1 * 0.75;
     this.txtStyle = BOLD;
+    this.volume = 1;
   } else if (circleType == 2){
     this.radius = radius2;
     this.txtSize = radius2 * 0.75;
     this.txtStyle = BOLD;
+    this.volume = 0.5;
   } else {
     this.radius = radius2;
     this.txtSize = radius2 * 0.75;
@@ -299,6 +296,7 @@ function CreateStrokeCircle (matra, vibhag, circleType, bol) {
     this.strokeWeight = 0;
     this.txtW = 2;
     increment = 1.05;
+    this.volume = 0.5;
   }
 
   this.circleAngle = map(matra, 0, avart, 0, 360);
@@ -414,25 +412,22 @@ function CreateIcon (matra, vibhag, size) {
 }
 
 function strokePlayer (angle) {
-  var checkPoint = strokePlayPoints[strokeToPlay];
+  var checkPoint = strokeCircles[strokeToPlay].circleAngle;
+  var sound = strokeCircles[strokeToPlay].sound;
   if (checkPoint == 0) {
-    if (angle < strokePlayPoints[strokePlayPoints.length-1]) {
-      var sC = strokeCircles[strokeToPlay];
-      var sound = soundDic[sC.bol.toLowerCase()];
-      sound.setVolume(sC.volume);
+    if (angle < strokeCircles[strokeCircles.length-1].circleAngle) {
+      sound.setVolume(strokeCircles[strokeToPlay].volume);
       sound.play();
       strokeToPlay++;
     }
   } else {
     if (angle >= checkPoint) {
-      var sC = strokeCircles[strokeToPlay];
-      var sound = soundDic[sC.bol.toLowerCase()];
-      sound.setVolume(sC.volume);
+      sound.setVolume(strokeCircles[strokeToPlay].volume);
       sound.play();
       strokeToPlay++;
     }
   }
-  if (strokeToPlay == strokePlayPoints.length) {
+  if (strokeToPlay == strokeCircles.length) {
     strokeToPlay = 0;
   }
 }
