@@ -88,6 +88,16 @@ a#sa-info-link:hover, a#sa-info-link:active {color: rgb(120, 0, 0);}
 footer {
   margin-top: 2px;
   text-align: center;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+img {
+  display: inline-block;
+}
+
+#musicalbridges {
+  height: 50px;
 }
 
 footer span {
