@@ -61,6 +61,7 @@ p {
 }
 
 li {
+  text-align: justify;
   padding-bottom: 0.5em;
 }
 
