@@ -416,14 +416,18 @@ function strokePlayer (angle) {
   var sound = strokeCircles[strokeToPlay].sound;
   if (checkPoint == 0) {
     if (angle < strokeCircles[strokeCircles.length-1].circleAngle) {
-      sound.setVolume(strokeCircles[strokeToPlay].volume);
-      sound.play();
+      if (sound != undefined) {
+        sound.setVolume(strokeCircles[strokeToPlay].volume);
+        sound.play();
+      }
       strokeToPlay++;
     }
   } else {
     if (angle >= checkPoint) {
-      sound.setVolume(strokeCircles[strokeToPlay].volume);
-      sound.play();
+      if (sound != undefined) {
+        sound.setVolume(strokeCircles[strokeToPlay].volume);
+        sound.play();
+      }
       strokeToPlay++;
     }
   }
