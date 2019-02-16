@@ -324,7 +324,7 @@ function start () {
     samList = samList.concat(tal.sam);
     var talBox = new CreateTalBox(tal);
     talBoxes.push(talBox);
-    var talCircle = new CreateTalCircle (tal.tal);
+    var talCircle = new CreateTalCircle(talBox.tal);
     talCircles[tal.tal] = talCircle;
   }
   currentAvart = new CreateCurrentAvart();
@@ -393,7 +393,7 @@ function CreateNavCursor () {
       var talBox = talBoxes[i];
       if (this.x > talBox.x1 && this.x < talBox.x2) {
         talBox.on();
-        currentTal = talBox.tal;
+        currentTal = talBox.talIndex;
         talName = talBox.fullName;
         noTal = false;
       } else {
@@ -717,9 +717,14 @@ function CreateIcon (matra, vibhag, avart) {
 }
 
 function CreateTalBox (tal) {
-  this.tal = tal.tal;
-  this.name = talInfo[tal.tal].nameTrans;
-  this.fullName = talInfo[tal.tal].name + "\n" + this.name;
+  if (tal.tal[tal.tal.length-1] == 'l') {
+    this.tal = tal.tal;
+  } else {
+    this.tal = tal.tal.slice(0, tal.tal.length-1);
+  }
+  this.talIndex = tal.tal;
+  this.name = talInfo[this.tal].nameTrans;
+  this.fullName = talInfo[this.tal].name + "\n" + this.name;
   this.h = 25;
   this.x1 = map(tal.start, 0, trackDuration, navBox.x1+navCursorW/2, navBox.x2-navCursorW/2);
   this.x2 = map(tal.end, 0, trackDuration, navBox.x1+navCursorW/2, navBox.x2-navCursorW/2);
