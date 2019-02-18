@@ -8,7 +8,7 @@ var backColorTrans;
 var frontColor;
 var shadeColor;
 var step = 0;
-var sa = 261.63;
+var sa = 276;
 var saptak;
 var ragNames = [];
 
@@ -35,6 +35,7 @@ var buttonPlay;
 var showTheka;
 var showTal;
 var showCursor;
+var slider;
 
 var cursorTop;
 var cursorBottom;
@@ -99,8 +100,8 @@ function setup () {
   frontColor = color(120, 0, 0);
   shadeColor = color(120, 0, 0);
 
-  cursorTop = 120;
-  cursorBottom = height-50;
+  cursorTop = 100;
+  cursorBottom = height-80;
   // talX = extraSpaceW + margin + (mainSpace-2*margin)/3;
   // talY = cursorTop + (cursorBottom-cursorTop)/2.8 + strokeRadius1/2;
   // talRadius = (cursorBottom-cursorTop)/2.8;// (mainSpace-2*margin)*0.25;
@@ -124,12 +125,17 @@ function setup () {
   // for (var i = 0; i < recordingsList.length; i++) {
   //   selectMenu.option(recordingsList[i].selectOption, i);
   // }
-  // buttonPlay = createButton("Carga el audio")
-  //   .size(120, 25)
-  //   .position(width - 120 - margin, margin)
-  //   .mouseClicked(player)
-  //   .attribute("disabled", "true")
-  //   .parent("sketch-holder");
+  buttonPlay = createButton("tānpūra")
+    .size(70, 20)
+    .position(10, height-30)
+    .mouseClicked(player)
+    .parent("sketch-holder");
+  slider = createSlider(0, 100)
+    .value(50)
+    .position(85, height-30)
+    .size(70, 20)
+    .changed(updateVolume)
+    .parent("sketch-holder");
   //
   // showTheka = createCheckbox(' ṭhekā', true)
   //   .position(extraSpaceW + margin, talY + talRadius)
@@ -169,7 +175,7 @@ function draw () {
     textSize(20);//this.radius*0.9);
     textStyle(BOLD);//this.txtStyle);
     fill(backColor);
-    text(ragNames[i], x, 85);
+    text(ragNames[i], x, 80);
   }
 
   // textAlign(CENTER, TOP);
@@ -789,33 +795,19 @@ function createSound (svara) {
 //   }
 // }
 //
-// function player () {
-//   if (loaded) {
-//     if (paused) {
-//       paused = false;
-//       if (jump == undefined) {
-//         track.play();
-//       } else {
-//         track.play();
-//         track.jump(jump);
-//         jump = undefined;
-//       }
-//       buttonPlay.html("Pausa");
-//     } else {
-//       paused = true;
-//       currentTime = track.currentTime();
-//       track.pause();
-//       buttonPlay.html("Sigue");
-//     }
-//   } else {
-//     initLoading = millis();
-//     buttonPlay.html("Cargando...");
-//     buttonPlay.attribute("disabled", "true");
-//     selectMenu.attribute("disabled", "true");
-//     charger.angle = 0;
-//     track = loadSound("tracks/" + trackFile, soundLoaded, failedLoad);
-//   }
-// }
+function player () {
+  if (loaded) {
+    if (track.isPlaying()) {
+      track.stop();
+    } else {
+      track.loop();
+    }
+  } else {
+    track = loadSound("sounds/tanpura/ac02.mp3");
+    track.setVolume(slider.value()/100);
+    loaded = true;
+  }
+}
 //
 // function CreateCharger () {
 //   this.angle;
@@ -908,19 +900,16 @@ function changeStep () {
 }
 
 function keyPressed () {
-  print(key);
   if (key == 'ArrowRight') {
     if (step < 4) {
       step++;
       changeStep();
     }
-    print(step);
   } else if (key == 'ArrowLeft') {
     if (step > 0) {
       step--;
       changeStep();
     }
-    print(step);
   } else {
     soundList[key.toLowerCase()].start();
   }
@@ -928,6 +917,11 @@ function keyPressed () {
 
 function keyReleased () {
   soundList[key.toLowerCase()].stop();
+}
+
+function updateVolume () {
+  print(slider.value()/100);
+  track.setVolume(slider.value()/100);
 }
 
 // function niceTime (seconds) {
