@@ -98,13 +98,13 @@ function setup() {
   for (var i = 0; i < talMenu.length; i++) {
     select.option(talInfo[talMenu[i]].nameTrans + " (" + talInfo[talMenu[i]].avart + ")", i);
   }
-  showTheka = createCheckbox('ṭhekā', true)
+  showTheka = createCheckbox(' ṭhekā', true)
     .position(10, height*0.1)
     .parent("sketch-holder");
-  showCursor = createCheckbox('cursor', true)
+  showCursor = createCheckbox(' cursor', true)
     .position(10, showTheka.position()["y"]+showTheka.height+5)
     .parent("sketch-holder");
-  showTal = createCheckbox('tāl', true)
+  showTal = createCheckbox(' tāl', true)
     .position(10, showCursor.position()["y"]+showCursor.height+5)
     .changed(function() {
       showTheka.checked(showTal.checked());

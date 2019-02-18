@@ -30,6 +30,7 @@ var selectMenu;
 var buttonPlay;
 var showTheka;
 var showTal;
+var showCursor;
 
 var cursorTop;
 var cursorBottom;
@@ -129,10 +130,10 @@ function setup () {
     .attribute("disabled", "true")
     .parent("sketch-holder");
 
-  showTheka = createCheckbox('ṭhekā', true)
+  showTheka = createCheckbox(' ṭhekā', true)
     .position(extraSpaceW + margin, talY + talRadius)
     .parent("sketch-holder");
-  showTal = createCheckbox('tāl', true)
+  showTal = createCheckbox(' tāl', true)
     .position(extraSpaceW + margin, showTheka.position()["y"] + showTheka.height)
     .changed(function() {
       showTheka.checked(showTal.checked());
@@ -143,10 +144,15 @@ function setup () {
       }
     })
     .parent("sketch-holder");
+  showCursor = createCheckbox(' cursor', true)
+    .position(margin, showTal.position()["y"]+showTal.height)
+    .parent("sketch-holder");
   showTheka.attribute("disabled", "true");
   showTheka.attribute("style", "color:rgba(120, 0, 0, 0.5);");
   showTal.attribute("disabled", "true");
   showTal.attribute("style", "color:rgba(120, 0, 0, 0.5);");
+  showCursor.attribute("disabled", "true");
+  showCursor.attribute("style", "color:rgba(120, 0, 0, 0.5);");
 }
 
 function draw () {
@@ -198,7 +204,7 @@ function draw () {
 
     var x = str(currentTime.toFixed(2));
     var p = pitchTrack[x];
-    if (p != "silence" && p >= minHz && p <= maxHz) {
+    if (p != "silence" && p >= minHz && p <= maxHz && showCursor.checked()) {
       var targetY = map(p, minHz, maxHz, cursorBottom, cursorTop);
       cursorY += (targetY - cursorY) * easing;
       fill("red");
@@ -337,6 +343,9 @@ function start () {
   showTal.attribute("disabled", "true");
   showTal.attribute("style", "color:rgba(120, 0, 0, 0.5);");
   showTal.checked("true");
+  showCursor.attribute("disabled", "true");
+  showCursor.attribute("style", "color:rgba(120, 0, 0, 0.5);");
+  showCursor.checked("true");
   buttonPlay.html("Carga el audio");
   buttonPlay.removeAttribute("disabled");
 }
@@ -829,6 +838,8 @@ function soundLoaded () {
   showTheka.attribute("style", "color:rgba(120, 0, 0);");
   showTal.removeAttribute("disabled");
   showTal.attribute("style", "color:rgba(120, 0, 0);");
+  showCursor.removeAttribute("disabled");
+  showCursor.attribute("style", "color:rgba(120, 0, 0);");
   var endLoading = millis();
   print("Track loaded in " + (endLoading-initLoading)/1000 + " seconds");
 }

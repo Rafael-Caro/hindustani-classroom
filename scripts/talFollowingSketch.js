@@ -119,13 +119,13 @@ function setup() {
   for (var i = 0; i < recordingsList.length; i++) {
     selectMenu.option(recordingsList[i].selectOption, i);
   }
-  showTheka = createCheckbox('ṭhekā', true)
+  showTheka = createCheckbox(' ṭhekā', true)
     .position(margin, height*0.2)
     .parent("sketch-holder");
-  showCursor = createCheckbox('cursor', true)
+  showCursor = createCheckbox(' cursor', true)
     .position(margin, showTheka.position()["y"]+showTheka.height+margin/2)
     .parent("sketch-holder");
-  showTal = createCheckbox('tāl', true)
+  showTal = createCheckbox(' tāl', true)
     .position(margin, showCursor.position()["y"]+showCursor.height+margin/2)
     .changed(function() {
       showTheka.checked(showTal.checked());

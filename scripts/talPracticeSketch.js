@@ -137,13 +137,13 @@ function setup () {
   for (var i = 0; i < recordingsList.length; i++) {
     selectMenu.option(recordingsList[i].selectOption, i);
   }
-  showTheka = createCheckbox('ṭhekā (x2)', true)
+  showTheka = createCheckbox(' ṭhekā (x2)', true)
     .position(markerW+margin, markerH+mainBoxSide*0.2)
     .parent("sketch-holder");
-  showCursor = createCheckbox('cursor (x3)', true)
+  showCursor = createCheckbox(' cursor (x3)', true)
     .position(markerW+margin, showTheka.position()["y"]+showTheka.height+margin/2)
     .parent("sketch-holder");
-  showTal = createCheckbox('tāl (x3)', true)
+  showTal = createCheckbox(' tāl (x3)', true)
     .position(markerW+margin, showCursor.position()["y"]+showCursor.height+margin/2)
     .changed(function() {
       showTheka.checked(showTal.checked());
