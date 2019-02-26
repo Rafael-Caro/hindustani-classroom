@@ -204,7 +204,7 @@ function draw () {
 
     var x = str(currentTime.toFixed(2));
     var p = pitchTrack[x];
-    if (p != "silence" && p >= minHz && p <= maxHz && showCursor.checked()) {
+    if (p != "s" && p >= minHz && p <= maxHz && showCursor.checked()) {
       var targetY = map(p, minHz, maxHz, cursorBottom, cursorTop);
       cursorY += (targetY - cursorY) * easing;
       fill("red");
@@ -319,7 +319,8 @@ function start () {
     svaraList.push(svara);
     createSound(pitchSpace[i]);
   }
-  pitchTrack = currentRecording.rag.pitchTrack;
+  // pitchTrack = currentRecording.rag.pitchTrack;
+  pitchTrack = loadJSON('files/pitchTracks/'+recordingsList[selectMenu.value()].mbid+'_pitchTrack.json');
   for (var i = 0; i < currentRecording.talList.length; i++) {
     var tal = currentRecording.talList[i];
     talList[tal.tal] = {
