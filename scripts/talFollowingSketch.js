@@ -64,13 +64,21 @@ var clap;
 // var iconSize = radius2*1.7;
 var iconDistance = 0.68;
 // var icons = [];
+// Language
+var lang_select;
+var lang_load;
+var lang_error;
+var lang_start;
+var lang_pause;
+var lang_continue;
+var lang_loading;
 
 function preload () {
-  recordingsList = loadJSON("files/talFollowing-recordingsList.json");
-  recordingsInfo = loadJSON("files/recordingsInfo.json");
-  talInfo = loadJSON("files/talInfo.json");
-  wave = loadImage("images/wave.svg");
-  clap = loadImage("images/clap.svg");
+  recordingsList = loadJSON("../files/talFollowing-recordingsList.json");
+  recordingsInfo = loadJSON("../files/recordingsInfo.json");
+  talInfo = loadJSON("../files/talInfo.json");
+  wave = loadImage("../images/wave.svg");
+  clap = loadImage("../images/clap.svg");
 }
 
 function setup() {
@@ -95,10 +103,31 @@ function setup() {
   cursor = new CreateCursor();
   navBox = new CreateNavigationBox();
 
+  //Language
+  var lang = select("html").elt.lang;
+  print(lang);
+  if (lang == "es") {
+    lang_load = "Carga el audio";
+    lang_select = "Elige";
+    lang_error = "Ha habido un problema cargando el audio\nPor favor, vuelve a cargar la página";
+    lang_start = "¡Comienza!";
+    lang_pause = "Pausa";
+    lang_continue = "Sigue";
+    lang_loading = "Cargando...";
+  } else if (lang == "en") {
+    lang_load = "Load the audio";
+    lang_select = "Select";
+    lang_error = "There was a problem loading the audio\nPlease, reaload the page";
+    lang_start = "Start!";
+    lang_pause = "Pause";
+    lang_continue = "Play";
+    lang_loading = "Loading...";
+  }
+
   //html interaction
   infoLink = select("#info-link");
   infoLink.position(width-60, margin*3+37);
-  button = createButton("Carga el audio")
+  button = createButton(lang_load)
     .size(120, 25)
     .position(width-120-margin, navBox.y1 - margin/2 - 25)
     .mousePressed(player)
@@ -109,7 +138,7 @@ function setup() {
     .position(margin, margin)
     .changed(start)
     .parent("sketch-holder");
-  selectMenu.option("Elige");
+  selectMenu.option(lang_select);
   var noRec = selectMenu.child();
   noRec[0].setAttribute("selected", "true");
   noRec[0].setAttribute("disabled", "true");
@@ -178,7 +207,7 @@ function draw() {
     textSize(15)
     noStroke()
     fill(0)
-    text("Ha habido un problema cargando el audio\nPor favor, vuelve a cargar la página", 0, 0);
+    text(lang_error, 0, 0);
   }
 
   rotate(-90);
@@ -319,7 +348,7 @@ function start () {
   showTal.attribute("disabled", "true");
   showTal.attribute("style", "color:rgba(0, 0, 0, 0.4);");
   showTal.checked("true");
-  button.html("Carga el audio");
+  button.html(lang_load);
   button.removeAttribute("disabled");
 }
 
@@ -495,7 +524,7 @@ function CreateNavCursor () {
       talName = undefined;
     }
     if (navBox.x2 - navCursorW/2 - this.x < 0.01) {
-      button.html("¡Comienza!");
+      button.html(lang_start);
       track.stop();
       paused = true;
       currentTime = 0;
@@ -700,25 +729,25 @@ function player() {
         track.jump(jump);
         jump = undefined;
       }
-      button.html("Pausa");
+      button.html(lang_pause);
     } else {
       paused = true;
       currentTime = track.currentTime();
       track.pause();
-      button.html("Sigue");
+      button.html(lang_continue);
     }
   } else {
     initLoading = millis();
-    button.html("Cargando...");
+    button.html(lang_loading);
     button.attribute("disabled", "true");
     selectMenu.attribute("disabled", "true");
     charger.angle = 0;
-    track = loadSound("tracks/" + trackFile, soundLoaded, failedLoad);
+    track = loadSound("../tracks/" + trackFile, soundLoaded, failedLoad);
   }
 }
 
 function soundLoaded () {
-  button.html("¡Comienza!");
+  button.html(lang_start);
   button.removeAttribute("disabled");
   selectMenu.removeAttribute("disabled");
   loaded = true;

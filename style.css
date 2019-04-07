@@ -11,7 +11,7 @@ body {
   font-family: Verdana, Geneva, sans-sans-serif;
   color: #353430;
   background-image: linear-gradient(white, #C8A2E5);
-  /* background-color() */
+  /* background-color: black; */
   width: 100%;
 }
 
@@ -19,12 +19,26 @@ nav, main, footer {
   background-color: white;
   width: 700px;
   margin: 0 auto;
-  padding: 10px 30px;
+  padding: 20px 30px;
 }
 
 nav {
-  text-align: right;
+  /* text-align: right; */
+  height: 0.8em;
   margin-bottom: 2px;
+}
+
+#language {
+  font-size: 0.8em;
+}
+
+#flag {
+  height: 0.8em;
+}
+
+#home {
+  float: right;
+  font-size: 1em;
 }
 
 main {

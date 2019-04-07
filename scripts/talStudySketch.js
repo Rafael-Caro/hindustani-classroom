@@ -53,11 +53,15 @@ var iconSamSize = radius1*1.7;
 var iconSize = radius2*1.7;
 var iconDistance = 0.72;
 var icons = [];
+// language
+var lang_select;
+var lang_start;
+var lang_stop;
 
 function preload () {
-  talInfo = loadJSON("files/talInfo.json");
-  wave = loadImage("images/wave.svg");
-  clap = loadImage("images/clap.svg");
+  talInfo = loadJSON("../files/talInfo.json");
+  wave = loadImage("../images/wave.svg");
+  clap = loadImage("../images/clap.svg");
 }
 
 function setup() {
@@ -76,6 +80,18 @@ function setup() {
   backColor = color(185, 239, 162);
   mainColor = color(249, 134, 50);
   matraColor = color(249, 175, 120);
+  //language
+  var lang = select("html").elt.lang;
+  print(lang);
+  if (lang == "en") {
+    lang_select = "Select a tāl";
+    lang_start = "Start!";
+    lang_stop = "Stop";
+  } else if (lang == "es") {
+    lang_select = "Elige un tāl";
+    lang_start = "¡Comienza!";
+    lang_stop = "Para";
+  }
   //html interaction
   slider = createSlider(5, 300)
     .position(10, height-30)
@@ -87,7 +103,7 @@ function setup() {
     .position(10, 10)
     .changed(start)
     .parent("sketch-holder");
-  select.option("Elige un tāl");
+  select.option(lang_select);
   var noTal = select.child();
   // print(noTal[0]);
   noTal[0].setAttribute("selected", "true");
@@ -116,7 +132,7 @@ function setup() {
   showCursor.attribute("style", "color:rgba(0, 0, 0, 0.4);");
   showTal.attribute("disabled", "true");
   showTal.attribute("style", "color:rgba(0, 0, 0, 0.4);");
-  button = createButton("¡Comienza!")
+  button = createButton(lang_start)
     .size(90, 25)
     .position(width-100, 10)
     .mousePressed(playTal)
@@ -202,7 +218,7 @@ function start() {
   cursorX = 0;
   cursorY = -radiusBig;
   var angle = 0;
-  button.html("¡Comienza!");
+  button.html(lang_start);
   if (button.attribute("disabled")) {
     button.removeAttribute("disabled");
   }
@@ -447,7 +463,7 @@ function playTal() {
     cursor = new CreateCursor();
     shade = new CreateShade();
     playing = true;
-    button.html("Para");
+    button.html(lang_stop);
     strokeToPlay = 0;
     strokePlayer(0);
     showCursor.removeAttribute("disabled");
@@ -456,7 +472,7 @@ function playTal() {
     showTal.attribute("style", "color:rgba(0, 0, 0, 0.6);");
   } else {
     playing = false;
-    button.html("¡Comienza!");
+    button.html(lang_start);
     showCursor.attribute("disabled", "true");
     showCursor.attribute("style", "color:rgba(0, 0, 0, 0.4);");
     showTal.attribute("disabled", "true");
@@ -467,28 +483,28 @@ function playTal() {
 function mouseClicked() {
   if (loaded == false) {
     var init = millis();
-    dha = loadSound("sounds/tablaStrokes/dha.mp3");
+    dha = loadSound("../sounds/tablaStrokes/dha.mp3");
     soundDic["dha"] = dha;
-    dhin = loadSound("sounds/tablaStrokes/dhin.mp3");
+    dhin = loadSound("../sounds/tablaStrokes/dhin.mp3");
     soundDic["dhin"] = dhin;
-    ge = loadSound("sounds/tablaStrokes/ga.mp3");
+    ge = loadSound("../sounds/tablaStrokes/ga.mp3");
     soundDic["ge"] = ge;
-    kat = loadSound("sounds/tablaStrokes/kat.mp3");
+    kat = loadSound("../sounds/tablaStrokes/kat.mp3");
     soundDic["kat"] = kat;
-    ki = loadSound("sounds/tablaStrokes/ka.mp3");
+    ki = loadSound("../sounds/tablaStrokes/ka.mp3");
     soundDic["ki"] = ki;
-    na = loadSound("sounds/tablaStrokes/na.mp3");
+    na = loadSound("../sounds/tablaStrokes/na.mp3");
     soundDic["na"] = na;
-    ra = loadSound("sounds/tablaStrokes/re.mp3");
+    ra = loadSound("../sounds/tablaStrokes/re.mp3");
     soundDic["ra"] = ra;
-    ta = loadSound("sounds/tablaStrokes/na.mp3");
+    ta = loadSound("../sounds/tablaStrokes/na.mp3");
     soundDic["ta"] = ta;
-    ti = loadSound("sounds/tablaStrokes/te.mp3");
+    ti = loadSound("../sounds/tablaStrokes/te.mp3");
     soundDic["te"] = ti;
     soundDic["ti"] = ti;
-    tin = loadSound("sounds/tablaStrokes/tin.mp3");
+    tin = loadSound("../sounds/tablaStrokes/tin.mp3");
     soundDic["tin"] = tin;
-    tun = loadSound("sounds/tablaStrokes/tun.mp3");
+    tun = loadSound("../sounds/tablaStrokes/tun.mp3");
     soundDic["tun"] = tun;
     var end = millis();
     print('Sounds loaded in ' + str(end-init)/1000 + ' seconds.');

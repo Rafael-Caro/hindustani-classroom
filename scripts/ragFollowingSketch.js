@@ -65,13 +65,21 @@ var paused = true;
 var charger;
 var currentTime = 0;
 var jump;
+// Language
+var lang_select;
+var lang_load;
+var lang_error;
+var lang_start;
+var lang_pause;
+var lang_continue;
+var lang_loading;
 
 function preload() {
-  recordingsList = loadJSON("files/ragFollowing-recordingsList.json");
-  recordingsInfo = loadJSON("files/recordingsInfo.json");
-  talInfo = loadJSON("files/talInfo.json");
-  wave = loadImage("images/wave.svg");
-  clap = loadImage("images/clap.svg");
+  recordingsList = loadJSON("../files/ragFollowing-recordingsList.json");
+  recordingsInfo = loadJSON("../files/recordingsInfo.json");
+  talInfo = loadJSON("../files/talInfo.json");
+  wave = loadImage("../images/wave.svg");
+  clap = loadImage("../images/clap.svg");
 }
 
 function setup () {
@@ -106,6 +114,27 @@ function setup () {
   talRadius = (cursorBottom-cursorTop)/2.8;// (mainSpace-2*margin)*0.25;
   melCursorX = extraSpaceW + (mainSpace-2*margin)*0.75;
 
+  //Language
+  var lang = select("html").elt.lang;
+  print(lang);
+  if (lang == "es") {
+    lang_load = "Carga el audio";
+    lang_select = "Elige";
+    lang_error = "Ha habido un problema cargando el audio\nPor favor, vuelve a cargar la página";
+    lang_start = "¡Comienza!";
+    lang_pause = "Pausa";
+    lang_continue = "Sigue";
+    lang_loading = "Cargando...";
+  } else if (lang == "en") {
+    lang_load = "Load the audio";
+    lang_select = "Select";
+    lang_error = "There was a problem loading the audio\nPlease, reaload the page";
+    lang_start = "Start!";
+    lang_pause = "Pause";
+    lang_continue = "Play";
+    lang_loading = "Loading...";
+  }
+
   infoLink = select("#sa-info-link");
   infoLink.position(width-60, extraSpaceH + margin*3.5 + 30);
   selectMenu = createSelect()
@@ -113,7 +142,7 @@ function setup () {
     .position(margin, margin)
     .changed(start)
     .parent("sketch-holder");
-  selectMenu.option("Elige");
+  selectMenu.option(lang_select);
   var noRec = selectMenu.child();
   noRec[0].setAttribute("selected", "true");
   noRec[0].setAttribute("disabled", "true");
@@ -123,7 +152,7 @@ function setup () {
   for (var i = 0; i < recordingsList.length; i++) {
     selectMenu.option(recordingsList[i].selectOption, i);
   }
-  buttonPlay = createButton("Carga el audio")
+  buttonPlay = createButton(lang_load)
     .size(120, 25)
     .position(width - 120 - margin, margin)
     .mouseClicked(player)
@@ -222,7 +251,7 @@ function draw () {
     textSize(15)
     noStroke()
     fill(0)
-    text("Ha habido un problema cargando el audio\nPor favor, vuelve a cargar la página", 0, 0);
+    text(lang_error, 0, 0);
   }
 
   rotate(-90);
@@ -320,7 +349,7 @@ function start () {
     createSound(pitchSpace[i]);
   }
   // pitchTrack = currentRecording.rag.pitchTrack;
-  pitchTrack = loadJSON('files/pitchTracks/'+recordingsList[selectMenu.value()].mbid+'_pitchTrack.json');
+  pitchTrack = loadJSON('../files/pitchTracks/'+recordingsList[selectMenu.value()].mbid+'_pitchTrack.json');
   for (var i = 0; i < currentRecording.talList.length; i++) {
     var tal = currentRecording.talList[i];
     talList[tal.tal] = {
@@ -347,7 +376,7 @@ function start () {
   showCursor.attribute("disabled", "true");
   showCursor.attribute("style", "color:rgba(120, 0, 0, 0.5);");
   showCursor.checked("true");
-  buttonPlay.html("Carga el audio");
+  buttonPlay.html(lang_load);
   buttonPlay.removeAttribute("disabled");
 }
 
@@ -415,7 +444,7 @@ function CreateNavCursor () {
       talName = undefined;
     }
     if (navBox.x2 - navCursorW/2 - this.x < 0.1) {
-      buttonPlay.html("¡Comienza!");
+      buttonPlay.html(lang_start);
       track.stop();
       paused = true;
       currentTime = 0;
@@ -800,20 +829,20 @@ function player () {
         track.jump(jump);
         jump = undefined;
       }
-      buttonPlay.html("Pausa");
+      buttonPlay.html(lang_pause);
     } else {
       paused = true;
       currentTime = track.currentTime();
       track.pause();
-      buttonPlay.html("Sigue");
+      buttonPlay.html(lang_continue);
     }
   } else {
     initLoading = millis();
-    buttonPlay.html("Cargando...");
+    buttonPlay.html(lang_loading);
     buttonPlay.attribute("disabled", "true");
     selectMenu.attribute("disabled", "true");
     charger.angle = 0;
-    track = loadSound("tracks/" + trackFile, soundLoaded, failedLoad);
+    track = loadSound("../tracks/" + trackFile, soundLoaded, failedLoad);
   }
 }
 
@@ -831,7 +860,7 @@ function CreateCharger () {
 }
 
 function soundLoaded () {
-  buttonPlay.html("¡Comienza!");
+  buttonPlay.html(lang_start);
   buttonPlay.removeAttribute("disabled");
   selectMenu.removeAttribute("disabled");
   loaded = true;

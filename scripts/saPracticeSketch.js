@@ -20,9 +20,21 @@ var buttonPlay;
 var buttonSadja;
 var buttonRecord;
 
+// Language
+var lang_study;
+var lang_practice;
+var lang_level;
+var lang_start;
+var lang_play;
+var lang_stop;
+var lang_retune;
+var lang_record;
+var lang_recording;
+var lang_listen;
+
 function preload () {
-  tanpuraInfo = loadJSON("files/tanpuraInfo.json");
-  tanpura = loadImage("images/tanpura.png");
+  tanpuraInfo = loadJSON("../files/tanpuraInfo.json");
+  tanpura = loadImage("../images/tanpura.png");
 }
 
 function setup () {
@@ -44,27 +56,54 @@ function setup () {
   sadja = new p5.Oscillator();
   sadja.setType("sawtooth");
 
+  // language
+  var lang = select("html").elt.lang;
+  print(lang);
+  if (lang == "en") {
+    lang_study = "Study mode";
+    lang_practice = "Practice mode";
+    lang_level = "Level";
+    lang_start = "Start";
+    lang_play = "Play";
+    lang_stop = "Stop";
+    lang_retune = "Retune";
+    lang_record = "Record";
+    lang_recording = "Recording...";
+    lang_listen = "Listen to yourself!";
+  } else if (lang == "es") {
+    lang_study = "Modo estudio";
+    lang_practice = "Modo práctica";
+    lang_level = "Nivel";
+    lang_start = "Comienza";
+    lang_play = "Toca";
+    lang_stop = "Para";
+    lang_retune = "Re-afina";
+    lang_record = "Graba";
+    lang_recording = "Grabando...";
+    lang_listen = "¡Escúchate!";
+  }
+
   selectMode = createSelect()
     .size(120, 25)
     .position(15, 15)
     .changed(changeMode)
     .parent("sketch-holder");
-  selectMode.option("Modo estudio", "0");
-  selectMode.option("Modo práctica", "1");
+  selectMode.option(lang_study, "0");
+  selectMode.option(lang_practice, "1");
   selectLevel = createSelect()
     .size(100, 25)
     .position(selectMode.x + selectMode.width + 10, 15)
     .changed(changeLevel)
     .parent("sketch-holder");
-  selectLevel.option("Nivel 1", "level1");
-  selectLevel.option("Nivel 2", "level2");
-  selectLevel.option("Nivel 3", "level3");
-  buttonSearchSound = createButton("Comienza")
+  selectLevel.option(lang_level + " 1", "level1");
+  selectLevel.option(lang_level + " 2", "level2");
+  selectLevel.option(lang_level + " 3", "level3");
+  buttonSearchSound = createButton(lang_start)
     .size(75, 25)
     .position(extraSpaceW + 15, extraSpaceH + mainSpace - 40)
     .mouseClicked(soundLoader)
     .parent("sketch-holder");
-  buttonPlay = createButton("Toca")
+  buttonPlay = createButton(lang_play)
     .size(75, 25)
     .position(buttonSearchSound.x + buttonSearchSound.width + 15, buttonSearchSound.y)
     .mouseClicked(player)
@@ -84,8 +123,8 @@ function setup () {
     .attribute("onmouseup", "sadja.stop()")
     .attribute("disabled", "true")
     .parent("sketch-holder");
-  buttonRecord = createButton("Graba")
-    .size(100, 25)
+  buttonRecord = createButton(lang_record)
+    .size(150, 25)
     .position(buttonPlay.x + buttonPlay.width + 15, buttonPlay.y)
     .mouseClicked(recordVoice)
     .attribute("disabled", "true")
@@ -132,18 +171,18 @@ function setup () {
 function draw () {}
 
 function player () {
-  if (buttonPlay.html() == "Toca") {
+  if (buttonPlay.html() == lang_play) {
     currentSound.loop();
-    buttonPlay.html("Para");
-    if (buttonRecord.html() == "Graba") {
+    buttonPlay.html(lang_stop);
+    if (buttonRecord.html() == lang_record) {
       buttonRecord.removeAttribute("disabled");
     } else {
       buttonRecord.attribute("disabled", "true");
     }
   } else {
     currentSound.stop();
-    buttonPlay.html("Toca");
-    if (buttonRecord.html() == "Graba") {
+    buttonPlay.html(lang_play);
+    if (buttonRecord.html() == lang_record) {
       buttonRecord.attribute("disabled", "true");
     } else {
       buttonRecord.removeAttribute("disabled");
@@ -152,19 +191,19 @@ function player () {
 }
 
 function recordVoice () {
-  if (buttonRecord.html() == "Graba") {
+  if (buttonRecord.html() == lang_record) {
     buttonSearchSound.attribute("disabled", "true");
     buttonPlay.attribute("disabled", "true");
     buttonSadja.attribute("disabled", "true");
-    buttonRecord.html("Grabando...");
+    buttonRecord.html(lang_recording);
     buttonRecord.attribute("disabled", "true");
     recorder.record(soundFile, 5, function () {
       currentSound.stop();
       buttonSearchSound.removeAttribute("disabled");
       buttonPlay.removeAttribute("disabled");
-      buttonPlay.html("Toca");
+      buttonPlay.html(lang_play);
       buttonSadja.removeAttribute("disabled");
-      buttonRecord.html("¡Escúchate!");
+      buttonRecord.html(lang_listen);
       buttonRecord.removeAttribute("disabled");
       mic.stop();
     });
@@ -206,14 +245,14 @@ function soundLoader () {
     var start = millis();
     for (var i = 0; i < tanpuraInfo.soundsLib.length; i++) {
       print(tanpuraInfo.soundsLib[str(i)].fileName);
-      sounds[i] = loadSound("sounds/tanpura/" + tanpuraInfo.soundsLib[str(i)].fileName);
+      sounds[i] = loadSound("../sounds/tanpura/" + tanpuraInfo.soundsLib[str(i)].fileName);
       sadjaList[i] = tanpuraInfo.soundsLib[str(i)].sa;
     }
     var timeLapse = millis() - start;
     print("All sounds loaded in " + str(timeLapse) + " seconds.");
     soundsList = tanpuraInfo.levels[selectLevel.value()];
     retune();
-    buttonSearchSound.html("Re-afina");
+    buttonSearchSound.html(lang_retune);
     buttonPlay.removeAttribute("disabled");
     buttonSadja.removeAttribute("disabled");
   } else {
@@ -224,13 +263,13 @@ function soundLoader () {
 function retune () {
   if (currentSound != undefined && currentSound.isPlaying()) {
     currentSound.stop();
-    buttonPlay.html("Toca");
+    buttonPlay.html(lang_play);
   }
   var index = soundsList[int(random(soundsList.length))];
   currentSound = sounds[index];
   sadja.freq(sadjaList[index]);
   print(index, currentSound, currentSound.duration());
-  buttonRecord.html("Graba");
+  buttonRecord.html(lang_record);
   buttonRecord.attribute("disabled", "true");
   if (selectMode.value() == "1") {
     mic.start();

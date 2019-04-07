@@ -75,13 +75,24 @@ var clap;
 // var iconSize = radius2*1.7;
 var iconDistance = 0.68;
 // var icons = [];
+// Language
+var lang_select;
+var lang_load;
+var lang_error;
+var lang_start;
+var lang_pause;
+var lang_continue;
+var lang_loading;
+var lang_attempts;
+var lang_hits;
+var lang_points;
 
 function preload () {
-  recordingsList = loadJSON("files/talPractice-recordingsList.json");
-  recordingsInfo = loadJSON("files/recordingsInfo.json");
-  talInfo = loadJSON("files/talInfo.json");
-  wave = loadImage("images/wave.svg");
-  clap = loadImage("images/clap.svg");
+  recordingsList = loadJSON("../files/talPractice-recordingsList.json");
+  recordingsInfo = loadJSON("../files/recordingsInfo.json");
+  talInfo = loadJSON("../files/talInfo.json");
+  wave = loadImage("../images/wave.svg");
+  clap = loadImage("../images/clap.svg");
 }
 
 function setup () {
@@ -107,10 +118,37 @@ function setup () {
   cursor = new CreateCursor();
   navBox = new CreateNavigationBox();
 
+  //Language
+  var lang = select("html").elt.lang;
+  print(lang);
+  if (lang == "es") {
+    lang_load = "Carga el audio";
+    lang_select = "Elige";
+    lang_error = "Ha habido un problema cargando el audio\nPor favor, vuelve a cargar la página";
+    lang_start = "¡Comienza!";
+    lang_pause = "Pausa";
+    lang_continue = "Sigue";
+    lang_loading = "Cargando...";
+    lang_attempts = "Intentos";
+    lang_hits = "Aciertos";
+    lang_points = "Puntos";
+  } else if (lang == "en") {
+    lang_load = "Load the audio";
+    lang_select = "Select";
+    lang_error = "There was a problem loading the audio\nPlease, reaload the page";
+    lang_start = "Start!";
+    lang_pause = "Pause";
+    lang_continue = "Play";
+    lang_loading = "Loading...";
+    lang_attempts = "Attempts";
+    lang_hits = "Hits";
+    lang_points = "Points";
+  }
+
   //html interaction
   infoLink = select("#info-link");
   infoLink.position(width-60, markerH+margin*3+37);
-  button = createButton("Carga el audio")
+  button = createButton(lang_load)
     .size(120, 25)
     .position(width-120-margin, navBoxY-margin/2-25)
     .mousePressed(player)
@@ -127,7 +165,7 @@ function setup () {
     .position(margin, margin)
     .changed(start)
     .parent("sketch-holder");
-  selectMenu.option("Elige");
+  selectMenu.option(lang_select);
   var noRec = selectMenu.child();
   noRec[0].setAttribute("selected", "true");
   noRec[0].setAttribute("disabled", "true");
@@ -160,9 +198,9 @@ function setup () {
   showCursor.attribute("style", "color:rgba(0, 0, 0, 0.4);");
   showTal.attribute("disabled", "true");
   showTal.attribute("style", "color:rgba(0, 0, 0, 0.4);");
-  attemptsBox = new CreateScoreBox(markerH + 150, "Intentos", color(0), NORMAL);
-  hitsBox = new CreateScoreBox(attemptsBox.x + attemptsBox.w + margin*2, "Aciertos", color(0), NORMAL);
-  scoreBox = new CreateScoreBox(hitsBox.x + hitsBox.w + margin*2, "Puntos", mainColor, BOLD); //color(52, 152, 219)
+  attemptsBox = new CreateScoreBox(markerH + 150, lang_attempts, color(0), NORMAL);
+  hitsBox = new CreateScoreBox(attemptsBox.x + attemptsBox.w + margin*2, lang_hits, color(0), NORMAL);
+  scoreBox = new CreateScoreBox(hitsBox.x + hitsBox.w + margin*2, lang_points, mainColor, BOLD); //color(52, 152, 219)
 }
 
 function draw () {
@@ -206,7 +244,7 @@ function draw () {
     textSize(15)
     noStroke()
     fill(0)
-    text("Ha habido un problema cargando el audio\nPor favor, vuelve a cargar la página", 0, 0);
+    text(lang_error, 0, 0);
   }
 
   rotate(-90);
@@ -312,6 +350,7 @@ function start () {
   talName = undefined;
   charger.angle = undefined;
   mpmTxt = undefined;
+  currentTal = undefined;
   samList = [];
   samIndex = 0;
   var currentRecording = recordingsInfo[recordingsList[selectMenu.value()].mbid];
@@ -348,7 +387,7 @@ function start () {
   showTal.attribute("disabled", "true");
   showTal.attribute("style", "color:rgba(0, 0, 0, 0.4);");
   showTal.checked("true");
-  button.html("Carga el audio");
+  button.html(lang_load);
   button.removeAttribute("disabled");
 }
 
@@ -469,12 +508,13 @@ function CreateScoreBox (x, title, col, style) {
   this.col = col;
   this.style = style;
   this.display = function(txt) {
-    textAlign(RIGHT, TOP);
+    textAlign(CENTER, TOP);
     fill(0);
     noStroke();
     textStyle(this.style);
     textSize(this.h * 0.75);
-    text(this.title, this.x+this.w, margin);
+    text(this.title, this.x+(this.w/2), margin);
+    textAlign(RIGHT, TOP);
     fill(255);
     stroke(150);
     strokeWeight(1);
@@ -564,7 +604,7 @@ function CreateNavCursor () {
       talName = undefined;
     }
     if (navBox.x2 - navCursorW/2 - this.x < 0.01) {
-      button.html("¡Comienza!");
+      button.html(lang_start);
       track.stop();
       paused = true;
       currentTime = 0;
@@ -772,25 +812,25 @@ function player () {
         jump = undefined;
       }
       paused = false;
-      button.html("Pausa");
+      button.html(lang_pause);
     } else {
       paused = true;
       currentTime = track.currentTime();
       track.pause();
-      button.html("Sigue");
+      button.html(lang_continue);
     }
   } else {
     initLoading = millis();
-      button.html("Cargando...");
+      button.html(lang_loading);
       button.attribute("disabled", "true");
       selectMenu.attribute("disabled", "true");
     charger.angle = 0;
-    track = loadSound("tracks/" + trackFile, soundLoaded, failedLoad);
+    track = loadSound("../tracks/" + trackFile, soundLoaded, failedLoad);
   }
 }
 
 function soundLoaded () {
-  button.html("¡Comienza!");
+  button.html(lang_start);
   button.removeAttribute("disabled");
   selectMenu.removeAttribute("disabled");
   loaded = true;
