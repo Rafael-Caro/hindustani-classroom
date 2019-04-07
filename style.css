@@ -15,7 +15,7 @@ body {
   width: 100%;
 }
 
-nav, main, footer {
+nav, main, section, footer {
   background-color: white;
   width: 700px;
   margin: 0 auto;
@@ -24,7 +24,7 @@ nav, main, footer {
 
 nav {
   /* text-align: right; */
-  height: 0.8em;
+  height: 1em;
   margin-bottom: 2px;
 }
 
@@ -108,6 +108,20 @@ footer {
 
 img {
   display: inline-block;
+}
+
+section {
+  background-color: white;
+  width: 700px;
+  margin: 2px auto;
+  padding: 10px 30px;
+  height: 100%;
+  font-size: 0.8em;
+}
+
+section p {
+  padding-bottom: 0px;
+  text-align: center;
 }
 
 #musicalbridges {
