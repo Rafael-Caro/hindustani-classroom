@@ -290,7 +290,9 @@ function forward () {
   if (step == 0) {
     backButton.removeAttribute("disabled");
   }
-  step ++;
+  if (step < 5) {
+    step ++;
+  }
   if (step == 5) {
     forwardButton.attribute("disabled", "true");
     showTheka.removeAttribute("hidden");
@@ -308,7 +310,9 @@ function back () {
     showTheka.attribute("hidden", "true");
     showTal.attribute("hidden", "true");
   }
-  step --;
+  if (step > 0) {
+    step --;
+  }
   if (step == 0) {
     backButton.attribute("disabled", "true");
   }
@@ -606,5 +610,13 @@ function mouseClicked() {
     for (var i = 0; i < strokeCircles.length; i++) {
       strokeCircles[i].clicked();
     }
+  }
+}
+
+function keyPressed() {
+  if (key == "ArrowRight") {
+    forward();
+  } else if (key == "ArrowLeft") {
+    back();
   }
 }
