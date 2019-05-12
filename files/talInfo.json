@@ -571,5 +571,43 @@
         "bol": "dhin"
       }
     ]
+  },
+  "dadra tal" : {
+    "name": "दादरा ताल",
+    "nameTrans": "dādrā tāl",
+    "avart": 6,
+    "tempoInit": 100,
+    "theka": [
+      {
+        "matra": 0,
+        "vibhag": 1.1,
+        "bol": "dha"
+      },
+      {
+        "matra": 1,
+        "vibhag": 1.2,
+        "bol": "dhin"
+      },
+      {
+        "matra": 2,
+        "vibhag": 1.3,
+        "bol": "na"
+      },
+      {
+        "matra": 3,
+        "vibhag": 2.1,
+        "bol": "dha"
+      },
+      {
+        "matra": 4,
+        "vibhag": 2.2,
+        "bol": "tin"
+      },
+      {
+        "matra": 5,
+        "vibhag": 2.3,
+        "bol": "na"
+      }
+    ]
   }
 }
