@@ -618,7 +618,7 @@ function CreateCurrentAvart () {
       }
       this.start = this.sam[this.index];
       this.end = this.sam[this.index+1];
-      var mpm = 60 / ((this.end - this.start) / 10);
+      var mpm = 60 / ((this.end - this.start) / talInfo[currentTal].avart);
       mpmTxt = str(mpm.toFixed(1)) + " mpm"
     }
   }
