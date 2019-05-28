@@ -468,8 +468,8 @@
       "duration": 1081.6402291666666
     },
     "rag": {
-      "name": "राग यमन",
-      "nameTrans": "Rāg Yaman",
+      "name": "राग यमन कल्याण",
+      "nameTrans": "Rāg Yaman Kalyāṇ",
       "pitchSpace": [
         {
           "svara": "Pa",
@@ -515,31 +515,38 @@
         },
         {
           "svara": "Ma",
+          "pitch": 206.457962,
+          "cent": 520.00,
+          "function": "",
+          "key": "f"
+        },
+        {
+          "svara": "Ma",
           "pitch": 216.2222595,
           "cent": 600.00,
           "function": "",
-          "key": "f"
+          "key": "g"
         },
         {
           "svara": "Pa",
           "pitch": 229.0795898,
           "cent": 700.00,
           "function": "",
-          "key": "g"
+          "key": "h"
         },
         {
           "svara": "Dha",
           "pitch": 257.1325125,
           "cent": 900.00,
           "function": "",
-          "key": "h"
+          "key": "j"
         },
         {
           "svara": "Ni",
           "pitch": 288.6225586,
           "cent": 1100.01,
           "function": "samvadi",
-          "key": "j"
+          "key": "k"
         },
         {
           "svara": "Sa",
