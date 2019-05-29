@@ -17,7 +17,7 @@ body {
 
 nav, main, section, footer {
   background-color: white;
-  width: 700px;
+  width: 900px;
   margin: 0 auto;
   padding: 20px 30px;
 }
@@ -112,7 +112,7 @@ img {
 
 section {
   background-color: white;
-  width: 700px;
+  width: 900px;
   margin: 2px auto;
   padding: 10px 30px;
   height: 100%;
