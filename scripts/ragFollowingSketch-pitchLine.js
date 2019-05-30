@@ -200,12 +200,6 @@ function draw () {
 
   textAlign(CENTER, TOP);
   textStyle(NORMAL);
-  textSize(15);
-  fill(0, 150);
-  stroke(0, 150);
-  strokeWeight(0, 150);
-  text(currentPhrase, width * 0.825, extraSpaceH + margin*5 + 40);
-
   textSize(30);
   strokeWeight(5);
   stroke(frontColor);
@@ -242,10 +236,22 @@ function draw () {
     navCursor.display();
     clock.display();
 
-    fill(255, 150);
+    if (currentPhrase == undefined) {
+      noFill();
+    } else {
+      fill(255, 150);
+    }
     stroke(frontColor);
+    strokeWeight(2);
+    rect(width * 0.82 - 40, extraSpaceH + margin*5 + 30, 80, 30, 20);
+
+    textAlign(CENTER, TOP);
+    textStyle(NORMAL);
+    textSize(15);
+    fill(0, 150);
+    stroke(0, 150);
     strokeWeight(1);
-    rect(width * 0.825 - 30, extraSpaceH + margin*5 + 30, 60, 30, 20);
+    text(currentPhrase, width * 0.82, extraSpaceH + margin*5 + 40);
 
     if (!paused) {
       currentTime = track.currentTime();
