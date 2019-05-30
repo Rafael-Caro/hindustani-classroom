@@ -200,10 +200,12 @@ function draw () {
 
   textAlign(CENTER, TOP);
   textStyle(NORMAL);
-  textSize(20);
-  fill(0);
-  noStroke();
-  text(currentPhrase, width/2, extraSpaceH + margin*6 + 40);
+  textSize(15);
+  fill(0, 150);
+  stroke(0, 150);
+  strokeWeight(0, 150);
+  text(currentPhrase, width * 0.825, extraSpaceH + margin*5 + 40);
+
   textSize(30);
   strokeWeight(5);
   stroke(frontColor);
@@ -239,6 +241,11 @@ function draw () {
     navCursor.update();
     navCursor.display();
     clock.display();
+
+    fill(255, 150);
+    stroke(frontColor);
+    strokeWeight(1);
+    rect(width * 0.825 - 30, extraSpaceH + margin*5 + 30, 60, 30, 20);
 
     if (!paused) {
       currentTime = track.currentTime();
@@ -486,7 +493,7 @@ function CreateNavCursor () {
     }
 
     if (currentTime > phrases[phraseIndex].e) {
-      if (phraseIndex < phrases.length) {
+      if (phraseIndex < phrases.length-1) {
         phraseIndex++;
         print(phraseIndex);
         if (currentTime >= phrases[phraseIndex].s) {
@@ -508,6 +515,7 @@ function CreateNavCursor () {
       track.stop();
       paused = true;
       currentTime = 0;
+      phraseIndex = 0;
     }
   }
 
