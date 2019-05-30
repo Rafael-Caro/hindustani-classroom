@@ -24,6 +24,7 @@ var minHz;
 var maxHz;
 var pitchTrack;
 var melodicLine = [];
+var melodicLineColor = {};
 var trackFile;
 var track;
 var trackDuration;
@@ -246,25 +247,29 @@ function draw () {
     var cT = currentTime;
     for (var i = 0; i < melCursorX - svaraLineX1; i++) {
       var lineX1 = (int(cT * 100) - (melCursorX - svaraLineX1 - i)) / 100;
-      var lineX2 = lineX1 + 0.01;
-      var lineY1 = map(pitchTrack[lineX1.toFixed(2)], minHz, maxHz, cursorBottom, cursorTop);
-      var lineY2 = map(pitchTrack[lineX2.toFixed(2)], minHz, maxHz, cursorBottom, cursorTop);
-      if (lineY1 <= cursorBottom && lineY1 >= cursorTop && lineY2 <= cursorBottom && lineY2 >= cursorTop) {
-        stroke(255);
-        strokeWeight(4);
-        line(svaraLineX1+i, lineY1, svaraLineX1+i+1, lineY2);
-      }
       if (samList.includes(lineX1)) {
         stroke(frontColor);
         strokeWeight(1);
         line(svaraLineX1+i, cursorTop, svaraLineX1+i, cursorBottom);
+      }
+      var lineX2 = lineX1 + 0.01;
+      var lineY1 = map(pitchTrack[lineX1.toFixed(2)], minHz, maxHz, cursorBottom, cursorTop);
+      var lineY2 = map(pitchTrack[lineX2.toFixed(2)], minHz, maxHz, cursorBottom, cursorTop);
+      if (lineY1 <= cursorBottom && lineY1 >= cursorTop && lineY2 <= cursorBottom && lineY2 >= cursorTop) {
+        if (melodicLineColor[lineX1.toFixed(2)] == 0) {
+          stroke(255);
+        } else if (melodicLineColor[lineX1.toFixed(2)] == 1) {
+          stroke(255, 0, 0);
+        }
+        strokeWeight(4);
+        line(svaraLineX1+i, lineY1, svaraLineX1+i+1, lineY2);
       }
     }
     var p = pitchTrack[cT.toFixed(2)];
     if (p != "s" && p >= minHz && p <= maxHz) { // && showCursor.checked()) {
       var targetY = map(p, minHz, maxHz, cursorBottom, cursorTop);
       cursorY += (targetY - cursorY) * easing;
-      if (currentPhrase != undefined) {
+      if (melodicLineColor[cT.toFixed(2)] == 1) {
         fill(255, 0, 0);
       } else {
         fill(255);
@@ -362,6 +367,7 @@ function start () {
   currentTal = undefined;
   // charger.angle = undefined;
   mpmTxt = undefined;
+  melodicLineColor = {};
   var currentRecording = recordingsInfo[recordingsList[selectMenu.value()].mbid];
   trackFile = currentRecording.info.trackFile;
   rag = currentRecording.rag.name + " " + currentRecording.rag.nameTrans;
@@ -383,8 +389,8 @@ function start () {
   phrases = currentRecording.rag.phrases;
   currentPhrase = undefined;
   phraseIndex = 0;
-  pitchTrack = loadJSON('../files/pitchTracks/'+recordingsList[selectMenu.value()].mbid+'_pitchTrack.json',
-                        loadMelodicLine);
+  fillMelodicLineColor(phrases);
+  pitchTrack = loadJSON('../files/pitchTracks/'+recordingsList[selectMenu.value()].mbid+'_pitchTrack.json');
   for (var i = 0; i < currentRecording.talList.length; i++) {
     var tal = currentRecording.talList[i];
     talList[tal.tal] = {
@@ -932,8 +938,23 @@ function failedLoad () {
   // charger.angle = undefined;
 }
 
-function loadMelodicLine () {
-
+function fillMelodicLineColor (phrases) {
+  var phrase_i = 0;
+  var phrase = phrases[phrase_i];
+  var pointColor = 0;
+  for (var i = 0; i < trackDuration * 100; i++) {
+    var t = i / 100;
+    if (t == phrase.s) {
+      pointColor = 1;
+    } else if (t == phrase.e) {
+      pointColor = 0;
+      phrase_i++;
+      if (phrase_i < phrases.length) {
+        phrase = phrases[phrase_i];
+      }
+    }
+    melodicLineColor[t] = pointColor;
+  }
 }
 
 function mouseClicked () {
