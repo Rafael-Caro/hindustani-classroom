@@ -20,7 +20,7 @@ var svaraLine = 20;
 var minHz;
 var maxHz;
 var pitchTrack;
-var displayMelody = [];
+var melodicLine = [];
 var trackFile;
 var track;
 var trackDuration;
@@ -82,6 +82,8 @@ function preload() {
   recordingsList = loadJSON("../files/ragFollowing-recordingsList.json");
   recordingsInfo = loadJSON("../files/recordingsInfo.json");
   talInfo = loadJSON("../files/talInfo.json");
+  // wave = loadImage("../images/wave.svg");
+  // clap = loadImage("../images/clap.svg");
 }
 
 function setup () {
@@ -107,10 +109,14 @@ function setup () {
   // charger = new CreateCharger();
   navBox = new CreateNavigationBox();
   navCursor = new CreateNavCursor();
+  // talCursor = new CreateTalCursor();
 
   cursorTop = extraSpaceH + margin*7 + 50;
   cursorBottom = navBox.y1-margin*4;
-  melCursorX = width - (svaraRadius1 * 4) - svaraLine - margin;
+  // talX = extraSpaceW + margin + (mainSpace-2*margin)/3;
+  // talY = cursorTop + (cursorBottom-cursorTop)/2.8 + strokeRadius1/2;
+  // talRadius = (cursorBottom-cursorTop)/2.8;// (mainSpace-2*margin)*0.25;
+  melCursorX = width - (svaraRadius1 * 4) - svaraLine - (margin * 2);
   svaraLineX1 = extraSpaceW + (svaraRadius1 * 4) + svaraLine + margin;
 
   //Language
@@ -149,9 +155,7 @@ function setup () {
   noRec[0].setAttribute("style", "display: none");
   recordingsList = recordingsList.recordingsList;
   for (var i = 0; i < recordingsList.length; i++) {
-    if (recordingsList[i].selectOption.includes('calan')) {
-      selectMenu.option(recordingsList[i].selectOption, i);
-    }
+    selectMenu.option(recordingsList[i].selectOption, i);
   }
   buttonPlay = createButton(lang_load)
     .size(120, 25)
@@ -159,9 +163,30 @@ function setup () {
     .mouseClicked(player)
     .attribute("disabled", "true")
     .parent("sketch-holder");
-  for (var i = 0; i < (melCursorX - margin * 2) / 2; i++) {
-    displayMelody.push(undefined);
-  }
+
+  // showTheka = createCheckbox(' ṭhekā', true)
+  //   .position(extraSpaceW + margin, talY + talRadius)
+  //   .parent("sketch-holder");
+  // showTal = createCheckbox(' tāl', true)
+  //   .position(extraSpaceW + margin, showTheka.position()["y"] + showTheka.height)
+  //   .changed(function() {
+  //     showTheka.checked(showTal.checked());
+  //     if (showTal.checked()) {
+  //       showTheka.removeAttribute("disabled");
+  //     } else {
+  //       showTheka.attribute("disabled", "true");
+  //     }
+  //   })
+  //   .parent("sketch-holder");
+  // showCursor = createCheckbox(' cursor', true)
+  //   .position(margin, showTal.position()["y"]+showTal.height)
+  //   .parent("sketch-holder");
+  // showTheka.attribute("disabled", "true");
+  // showTheka.attribute("style", "color:rgba(120, 0, 0, 0.5);");
+  // showTal.attribute("disabled", "true");
+  // showTal.attribute("style", "color:rgba(120, 0, 0, 0.5);");
+  // showCursor.attribute("disabled", "true");
+  // showCursor.attribute("style", "color:rgba(120, 0, 0, 0.5);");
 }
 
 function draw () {
@@ -188,6 +213,11 @@ function draw () {
   fill(0, 150);
   text(artist, extraSpaceW + spaceWidth/2, extraSpaceH + margin*4 + 30);
 
+  // stroke("red");
+  // line(0, cursorTop, width, cursorTop);
+  // stroke("green");
+  // line(0, cursorBottom, width, cursorBottom);
+
   for (var i = 0; i < svaraList.length; i++) {
     svaraList[i].displayLines();
   }
@@ -206,33 +236,87 @@ function draw () {
       currentTime = track.currentTime();
     }
 
-    var x = str(currentTime.toFixed(2));
-    var p = pitchTrack[x];
+    var cT = currentTime;
+    for (var i = 0; i < melCursorX - svaraLineX1; i++) {
+      var lineX1 = (int(cT * 100) - (melCursorX - svaraLineX1 - i)) / 100;
+      var lineX2 = lineX1 + 0.01;
+      var lineY1 = map(pitchTrack[lineX1.toFixed(2)], minHz, maxHz, cursorBottom, cursorTop);
+      var lineY2 = map(pitchTrack[lineX2.toFixed(2)], minHz, maxHz, cursorBottom, cursorTop);
+      if (lineY1 <= cursorBottom && lineY1 >= cursorTop && lineY2 <= cursorBottom && lineY2 >= cursorTop) {
+        stroke(255);
+        strokeWeight(4);
+        line(svaraLineX1+i, lineY1, svaraLineX1+i+1, lineY2);
+      }
+    }
+    var p = pitchTrack[cT.toFixed(2)];
     if (p != "s" && p >= minHz && p <= maxHz) { // && showCursor.checked()) {
       var targetY = map(p, minHz, maxHz, cursorBottom, cursorTop);
-      displayMelody.shift();
-      displayMelody.push(targetY);
       cursorY += (targetY - cursorY) * easing;
       fill(melCursorColor);
       stroke(frontColor);
       strokeWeight(1);
       ellipse(melCursorX, cursorY, melCursorRadius, melCursorRadius);
-    } else {
-    displayMelody.shift();
-    displayMelody.push(undefined);
     }
   }
 
-  // for (var i = 0; i < displayMelody.length; i++) {
-  //   fill(255);
-  //   noStroke();
-  //   ellipse((margin * 2) + (i * 2), displayMelody[i], 2, 2);
+  // push();
+  // translate(talX, talY);
+  //
+  // if (failedLoading) {
+  //   textAlign(CENTER, CENTER);
+  //   textSize(15)
+  //   noStroke()
+  //   fill(0)
+  //   text(lang_error, 0, 0);
   // }
-  for (var i = 0; i < displayMelody.length-1; i++) {
-    stroke(255);
-    strokeWeight(2);
-    line((margin*2)+(i*2), displayMelody[i], (margin*2)+((i+1)*2), displayMelody[i+1])
-  }
+  //
+  // rotate(-90);
+  //
+  // if (loaded) {
+  //   noFill();
+  //   stroke(frontColor);
+  //   strokeWeight(2);
+  //   ellipse(0, 0, talRadius, talRadius);
+  //
+  //   if (showTal.checked()) {
+  //     shade.update();
+  //     shade.display();
+  //   }
+  //
+  //   if (currentTal != undefined && showTal.checked()) {
+  //     var talToDraw = talCircles[currentTal];
+  //     for (var i = 0; i < talToDraw.strokeCircles.length; i++) {
+  //       talToDraw.strokeCircles[i].display();
+  //     }
+  //     if (showTheka.checked()) {
+  //       for (var i = 0; i < talToDraw.strokeCircles.length; i++) {
+  //         talToDraw.strokeCircles[i].displayTheka();
+  //       }
+  //       for (var i = 0; i < talToDraw.icons.length; i++) {
+  //         talToDraw.icons[i].display();
+  //       }
+  //     }
+  //   }
+  //   talCursor.update();
+  //   talCursor.display();
+  // } else {
+  //   charger.update();
+  //   charger.display();
+  //   talCursor.loadingUpdate();
+  //   talCursor.display();
+  // }
+  //
+  // pop();
+
+  // if (showTal.checked()) {
+  //   textAlign(CENTER, CENTER);
+  //   textSize(20);
+  //   textStyle(NORMAL);
+  //   stroke(backColor);
+  //   strokeWeight(5);
+  //   fill(frontColor);
+  //   text(talName, talX, talY);
+  // }
 
   for (var i = 0; i < talBoxes.length; i++) {
     talBoxes[i].display();
@@ -262,9 +346,6 @@ function start () {
   currentTal = undefined;
   // charger.angle = undefined;
   mpmTxt = undefined;
-  for (var i = 0; i < displayMelody.length; i++) {
-    displayMelody[i] = undefined;
-  }
   var currentRecording = recordingsInfo[recordingsList[selectMenu.value()].mbid];
   trackFile = currentRecording.info.trackFile;
   rag = currentRecording.rag.name + " " + currentRecording.rag.nameTrans;
@@ -283,7 +364,9 @@ function start () {
     svaraList.push(svara);
     createSound(pitchSpace[i]);
   }
-  pitchTrack = loadJSON('../files/pitchTracks/'+recordingsList[selectMenu.value()].mbid+'_pitchTrack.json');
+  // pitchTrack = currentRecording.rag.pitchTrack;
+  pitchTrack = loadJSON('../files/pitchTracks/'+recordingsList[selectMenu.value()].mbid+'_pitchTrack.json',
+                        loadMelodicLine);
   for (var i = 0; i < currentRecording.talList.length; i++) {
     var tal = currentRecording.talList[i];
     talList[tal.tal] = {
@@ -294,10 +377,22 @@ function start () {
     samList = samList.concat(tal.sam);
     var talBox = new CreateTalBox(tal);
     talBoxes.push(talBox);
+    // var talCircle = new CreateTalCircle(talBox.tal);
+    // talCircles[tal.tal] = talCircle;
   }
   currentAvart = new CreateCurrentAvart();
+  // shade = new CreateShade();
   clock = new CreateClock;
 
+  // showTheka.attribute("disabled", "true");
+  // showTheka.attribute("style", "color:rgba(120, 0, 0, 0.5);");
+  // showTheka.checked("true");
+  // showTal.attribute("disabled", "true");
+  // showTal.attribute("style", "color:rgba(120, 0, 0, 0.5);");
+  // showTal.checked("true");
+  // showCursor.attribute("disabled", "true");
+  // showCursor.attribute("style", "color:rgba(120, 0, 0, 0.5);");
+  // showCursor.checked("true");
   buttonPlay.html(lang_load);
   buttonPlay.removeAttribute("disabled");
 }
@@ -423,7 +518,7 @@ function CreateSvara (svara) {
   this.displayLines = function () {
     stroke(frontColor);
     strokeWeight(this.lineW);
-    line(svaraLineX1 - this.x_adjust, this.y, melCursorX + this.x_adjust, this.y)
+    line(svaraLineX1 - this.x_adjust, this.y, melCursorX + this.x_adjust, this.y);
   }
 
   this.displaySvara = function () {
@@ -440,12 +535,12 @@ function CreateSvara (svara) {
     fill(this.txtCol);
     text(this.name, melCursorX + this.x_adjust + svaraRadius1, this.y+this.radius*0.1);
     text(this.name, svaraLineX1 - this.x_adjust - svaraRadius1, this.y+this.radius*0.1);
-    // stroke(frontColor);
-    // strokeWeight(3);
-    // fill(backColor);
-    // textSize(svaraRadius1*0.7);
-    // textStyle(NORMAL);
-    // text(this.key, this.x2 + svaraRadius1 + textWidth(this.name), this.y + (svaraRadius1*0.9)/2)
+    stroke(frontColor);
+    strokeWeight(3);
+    fill(backColor);
+    textSize(svaraRadius1*0.7);
+    textStyle(NORMAL);
+    text(this.key, melCursorX + this.x_adjust + svaraRadius1 + textWidth(this.name), this.y + (svaraRadius1*0.9)/2)
   }
 }
 
@@ -798,6 +893,10 @@ function failedLoad () {
   print("Loading failed");
   failedLoading = true;
   // charger.angle = undefined;
+}
+
+function loadMelodicLine () {
+
 }
 
 function mouseClicked () {
