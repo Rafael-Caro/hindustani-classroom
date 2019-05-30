@@ -16,7 +16,7 @@ var svaraList = [];
 var soundList = {};
 var svaraRadius1 = 20;
 var svaraRadius2 = 17;
-var svaraLine = 50;
+var svaraLine = 20;
 var minHz;
 var maxHz;
 var pitchTrack;
@@ -82,8 +82,6 @@ function preload() {
   recordingsList = loadJSON("../files/ragFollowing-recordingsList.json");
   recordingsInfo = loadJSON("../files/recordingsInfo.json");
   talInfo = loadJSON("../files/talInfo.json");
-  // wave = loadImage("../images/wave.svg");
-  // clap = loadImage("../images/clap.svg");
 }
 
 function setup () {
@@ -109,15 +107,11 @@ function setup () {
   // charger = new CreateCharger();
   navBox = new CreateNavigationBox();
   navCursor = new CreateNavCursor();
-  // talCursor = new CreateTalCursor();
 
   cursorTop = extraSpaceH + margin*7 + 50;
   cursorBottom = navBox.y1-margin*4;
-  // talX = extraSpaceW + margin + (mainSpace-2*margin)/3;
-  // talY = cursorTop + (cursorBottom-cursorTop)/2.8 + strokeRadius1/2;
-  // talRadius = (cursorBottom-cursorTop)/2.8;// (mainSpace-2*margin)*0.25;
-  // melCursorX = extraSpaceW + (spaceWidth-2*margin)*0.75;
-  melCursorX = width - (margin * 6) - (svaraLine / 2) - (svaraRadius1 * 2) - 20;
+  melCursorX = width - (svaraRadius1 * 4) - svaraLine - margin;
+  svaraLineX1 = extraSpaceW + (svaraRadius1 * 4) + svaraLine + margin;
 
   //Language
   var lang = select("html").elt.lang;
@@ -165,30 +159,6 @@ function setup () {
     .mouseClicked(player)
     .attribute("disabled", "true")
     .parent("sketch-holder");
-
-  // showTheka = createCheckbox(' ṭhekā', true)
-  //   .position(extraSpaceW + margin, talY + talRadius)
-  //   .parent("sketch-holder");
-  // showTal = createCheckbox(' tāl', true)
-  //   .position(extraSpaceW + margin, showTheka.position()["y"] + showTheka.height)
-  //   .changed(function() {
-  //     showTheka.checked(showTal.checked());
-  //     if (showTal.checked()) {
-  //       showTheka.removeAttribute("disabled");
-  //     } else {
-  //       showTheka.attribute("disabled", "true");
-  //     }
-  //   })
-  //   .parent("sketch-holder");
-  // showCursor = createCheckbox(' cursor', true)
-  //   .position(margin, showTal.position()["y"]+showTal.height)
-  //   .parent("sketch-holder");
-  // showTheka.attribute("disabled", "true");
-  // showTheka.attribute("style", "color:rgba(120, 0, 0, 0.5);");
-  // showTal.attribute("disabled", "true");
-  // showTal.attribute("style", "color:rgba(120, 0, 0, 0.5);");
-  // showCursor.attribute("disabled", "true");
-  // showCursor.attribute("style", "color:rgba(120, 0, 0, 0.5);");
   for (var i = 0; i < (melCursorX - margin * 2) / 2; i++) {
     displayMelody.push(undefined);
   }
@@ -217,11 +187,6 @@ function draw () {
   textSize(20);
   fill(0, 150);
   text(artist, extraSpaceW + spaceWidth/2, extraSpaceH + margin*4 + 30);
-
-  // stroke("red");
-  // line(0, cursorTop, width, cursorTop);
-  // stroke("green");
-  // line(0, cursorBottom, width, cursorBottom);
 
   for (var i = 0; i < svaraList.length; i++) {
     svaraList[i].displayLines();
@@ -268,65 +233,6 @@ function draw () {
     strokeWeight(2);
     line((margin*2)+(i*2), displayMelody[i], (margin*2)+((i+1)*2), displayMelody[i+1])
   }
-
-  // push();
-  // translate(talX, talY);
-  //
-  // if (failedLoading) {
-  //   textAlign(CENTER, CENTER);
-  //   textSize(15)
-  //   noStroke()
-  //   fill(0)
-  //   text(lang_error, 0, 0);
-  // }
-  //
-  // rotate(-90);
-  //
-  // if (loaded) {
-  //   noFill();
-  //   stroke(frontColor);
-  //   strokeWeight(2);
-  //   ellipse(0, 0, talRadius, talRadius);
-  //
-  //   if (showTal.checked()) {
-  //     shade.update();
-  //     shade.display();
-  //   }
-  //
-  //   if (currentTal != undefined && showTal.checked()) {
-  //     var talToDraw = talCircles[currentTal];
-  //     for (var i = 0; i < talToDraw.strokeCircles.length; i++) {
-  //       talToDraw.strokeCircles[i].display();
-  //     }
-  //     if (showTheka.checked()) {
-  //       for (var i = 0; i < talToDraw.strokeCircles.length; i++) {
-  //         talToDraw.strokeCircles[i].displayTheka();
-  //       }
-  //       for (var i = 0; i < talToDraw.icons.length; i++) {
-  //         talToDraw.icons[i].display();
-  //       }
-  //     }
-  //   }
-  //   talCursor.update();
-  //   talCursor.display();
-  // } else {
-  //   charger.update();
-  //   charger.display();
-  //   talCursor.loadingUpdate();
-  //   talCursor.display();
-  // }
-  //
-  // pop();
-
-  // if (showTal.checked()) {
-  //   textAlign(CENTER, CENTER);
-  //   textSize(20);
-  //   textStyle(NORMAL);
-  //   stroke(backColor);
-  //   strokeWeight(5);
-  //   fill(frontColor);
-  //   text(talName, talX, talY);
-  // }
 
   for (var i = 0; i < talBoxes.length; i++) {
     talBoxes[i].display();
@@ -377,7 +283,6 @@ function start () {
     svaraList.push(svara);
     createSound(pitchSpace[i]);
   }
-  // pitchTrack = currentRecording.rag.pitchTrack;
   pitchTrack = loadJSON('../files/pitchTracks/'+recordingsList[selectMenu.value()].mbid+'_pitchTrack.json');
   for (var i = 0; i < currentRecording.talList.length; i++) {
     var tal = currentRecording.talList[i];
@@ -389,22 +294,10 @@ function start () {
     samList = samList.concat(tal.sam);
     var talBox = new CreateTalBox(tal);
     talBoxes.push(talBox);
-    // var talCircle = new CreateTalCircle(talBox.tal);
-    // talCircles[tal.tal] = talCircle;
   }
   currentAvart = new CreateCurrentAvart();
-  // shade = new CreateShade();
   clock = new CreateClock;
 
-  // showTheka.attribute("disabled", "true");
-  // showTheka.attribute("style", "color:rgba(120, 0, 0, 0.5);");
-  // showTheka.checked("true");
-  // showTal.attribute("disabled", "true");
-  // showTal.attribute("style", "color:rgba(120, 0, 0, 0.5);");
-  // showTal.checked("true");
-  // showCursor.attribute("disabled", "true");
-  // showCursor.attribute("style", "color:rgba(120, 0, 0, 0.5);");
-  // showCursor.checked("true");
   buttonPlay.html(lang_load);
   buttonPlay.removeAttribute("disabled");
 }
@@ -488,35 +381,30 @@ function CreateNavCursor () {
 }
 
 function CreateSvara (svara) {
-  this.x1 = melCursorX;
   this.y = map(svara.cent, minHz, maxHz, cursorBottom, cursorTop);
   this.name = svara.svara;
   this.key = svara.key;
   this.function = svara.function;
   if (this.function == "sadja") {
     this.radius = svaraRadius1;
-    this.extraX = 20;
     this.col = frontColor;
     this.strokeW = 4;
     this.lineW = 4;
     this.txtCol = backColor;
   } else if (this.function == "vadi") {
     this.radius = svaraRadius1;
-    this.extraX = 0;
     this.col = backColor;
     this.strokeW = 4;
     this.lineW = 2;
     this.txtCol = frontColor;
   } else if (this.function == "samvadi") {
     this.radius = svaraRadius2;
-    this.extraX = 0;
     this.col = backColor;
     this.strokeW = 2;
     this.lineW = 2;
     this.txtCol = frontColor;
   } else {
     this.radius = svaraRadius2;
-    this.extraX = 0;
     this.col = color(0, 0);
     this.strokeW = 0;
     this.lineW = 1;
@@ -529,32 +417,35 @@ function CreateSvara (svara) {
   } else {
     this.position = 0;
   }
-  this.x2 = this.x1 + svaraLine/2 + (svaraRadius1*2 + margin) * this.position;
+
+  this.x_adjust = svaraLine + (svaraRadius1*2) * this.position;
 
   this.displayLines = function () {
     stroke(frontColor);
     strokeWeight(this.lineW);
-    line(this.x1-svaraLine/2-this.extraX, this.y, this.x2, this.y)
+    line(svaraLineX1 - this.x_adjust, this.y, melCursorX + this.x_adjust, this.y)
   }
 
   this.displaySvara = function () {
     stroke(frontColor);
     strokeWeight(this.strokeW);
     fill(this.col);
-    ellipse(this.x2 + svaraRadius1, this.y, svaraRadius1, svaraRadius1);
+    ellipse(melCursorX + this.x_adjust + svaraRadius1, this.y, svaraRadius1, svaraRadius1);
+    ellipse(svaraLineX1 - this.x_adjust - svaraRadius1, this.y, svaraRadius1, svaraRadius1);
 
     textAlign(CENTER, CENTER);
     noStroke();
     textSize(svaraRadius1*0.9);//this.radius*0.9);
     textStyle(BOLD);//this.txtStyle);
     fill(this.txtCol);
-    text(this.name, this.x2 + svaraRadius1, this.y+this.radius*0.1);
-    stroke(frontColor);
-    strokeWeight(3);
-    fill(backColor);
-    textSize(svaraRadius1*0.7);
-    textStyle(NORMAL);
-    text(this.key, this.x2 + svaraRadius1 + textWidth(this.name), this.y + (svaraRadius1*0.9)/2)
+    text(this.name, melCursorX + this.x_adjust + svaraRadius1, this.y+this.radius*0.1);
+    text(this.name, svaraLineX1 - this.x_adjust - svaraRadius1, this.y+this.radius*0.1);
+    // stroke(frontColor);
+    // strokeWeight(3);
+    // fill(backColor);
+    // textSize(svaraRadius1*0.7);
+    // textStyle(NORMAL);
+    // text(this.key, this.x2 + svaraRadius1 + textWidth(this.name), this.y + (svaraRadius1*0.9)/2)
   }
 }
 
