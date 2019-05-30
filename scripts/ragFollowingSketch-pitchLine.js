@@ -14,6 +14,9 @@ var recordingsList;
 var pitchSpace;
 var svaraList = [];
 var soundList = {};
+var phrases = [];
+var currentPhrase;
+var phraseIndex = 0;
 var svaraRadius1 = 20;
 var svaraRadius2 = 17;
 var svaraLine = 20;
@@ -58,7 +61,7 @@ var talList = {};
 var talCircles = {};
 var talName = undefined;
 var currentTal = undefined;
-var currentAvart;
+// var currentAvart;
 var strokeRadius1 = 20;
 var strokeRadius2 = 15;
 var iconDistance = 0.7;
@@ -196,6 +199,10 @@ function draw () {
 
   textAlign(CENTER, TOP);
   textStyle(NORMAL);
+  textSize(20);
+  fill(0);
+  noStroke();
+  text(currentPhrase, width/2, extraSpaceH + margin*6 + 40);
   textSize(30);
   strokeWeight(5);
   stroke(frontColor);
@@ -257,7 +264,11 @@ function draw () {
     if (p != "s" && p >= minHz && p <= maxHz) { // && showCursor.checked()) {
       var targetY = map(p, minHz, maxHz, cursorBottom, cursorTop);
       cursorY += (targetY - cursorY) * easing;
-      fill(melCursorColor);
+      if (currentPhrase != undefined) {
+        fill(255, 0, 0);
+      } else {
+        fill(255);
+      }
       stroke(frontColor);
       strokeWeight(1);
       ellipse(melCursorX, cursorY, melCursorRadius, melCursorRadius);
@@ -369,7 +380,9 @@ function start () {
     svaraList.push(svara);
     createSound(pitchSpace[i]);
   }
-  // pitchTrack = currentRecording.rag.pitchTrack;
+  phrases = currentRecording.rag.phrases;
+  currentPhrase = undefined;
+  phraseIndex = 0;
   pitchTrack = loadJSON('../files/pitchTracks/'+recordingsList[selectMenu.value()].mbid+'_pitchTrack.json',
                         loadMelodicLine);
   for (var i = 0; i < currentRecording.talList.length; i++) {
@@ -385,7 +398,7 @@ function start () {
     // var talCircle = new CreateTalCircle(talBox.tal);
     // talCircles[tal.tal] = talCircle;
   }
-  currentAvart = new CreateCurrentAvart();
+  // currentAvart = new CreateCurrentAvart();
   // shade = new CreateShade();
   clock = new CreateClock;
 
@@ -465,6 +478,25 @@ function CreateNavCursor () {
       currentTal = undefined;
       talName = undefined;
     }
+
+    if (currentTime > phrases[phraseIndex].e) {
+      if (phraseIndex < phrases.length) {
+        phraseIndex++;
+        print(phraseIndex);
+        if (currentTime >= phrases[phraseIndex].s) {
+          currentPhrase = phrases[phraseIndex].l;
+        } else {
+          currentPhrase = undefined;
+        }
+      } else {
+        currentPhrase = undefined;
+      }
+    } else if (currentTime < phrases[phraseIndex].s) {
+      currentPhrase = undefined;
+    } else {
+      currentPhrase = phrases[phraseIndex].l;
+    }
+
     if (navBox.x2 - navCursorW/2 - this.x < 0.1) {
       buttonPlay.html(lang_start);
       track.stop();
@@ -608,41 +640,41 @@ function createSound (svara) {
 //   }
 // }
 
-function CreateCurrentAvart () {
-  this.index;
-  this.tal;
-  this.sam;
-  this.start;
-  this.end;
-  this.findIndex = function () {
-    while (currentTime > this.sam[this.index+1]) {
-      this.index++;
-    }
-    while (currentTime < this.sam[this.index]) {
-      this.index--;
-    }
-  }
-  this.update = function () {
-    if (currentTal == undefined) {
-      this.start = undefined;
-      this.end = undefined;
-      mpmTxt = undefined;
-    } else {
-      if (this.tal == currentTal) {
-        this.findIndex();
-      } else {
-        this.tal = currentTal
-        this.sam = talList[this.tal].sam;
-        this.index = 0;
-        this.findIndex();
-      }
-      this.start = this.sam[this.index];
-      this.end = this.sam[this.index+1];
-      var mpm = 60 / ((this.end - this.start) / talInfo[currentTal].avart);
-      mpmTxt = str(mpm.toFixed(1)) + " mpm"
-    }
-  }
-}
+// function CreateCurrentAvart () {
+//   this.index;
+//   this.tal;
+//   this.sam;
+//   this.start;
+//   this.end;
+//   this.findIndex = function () {
+//     while (currentTime > this.sam[this.index+1]) {
+//       this.index++;
+//     }
+//     while (currentTime < this.sam[this.index]) {
+//       this.index--;
+//     }
+//   }
+//   this.update = function () {
+//     if (currentTal == undefined) {
+//       this.start = undefined;
+//       this.end = undefined;
+//       mpmTxt = undefined;
+//     } else {
+//       if (this.tal == currentTal) {
+//         this.findIndex();
+//       } else {
+//         this.tal = currentTal
+//         this.sam = talList[this.tal].sam;
+//         this.index = 0;
+//         this.findIndex();
+//       }
+//       this.start = this.sam[this.index];
+//       this.end = this.sam[this.index+1];
+//       var mpm = 60 / ((this.end - this.start) / talInfo[currentTal].avart);
+//       mpmTxt = str(mpm.toFixed(1)) + " mpm"
+//     }
+//   }
+// }
 
 // function CreateTalCircle (tal) {
 //   this.strokeCircles = [];
