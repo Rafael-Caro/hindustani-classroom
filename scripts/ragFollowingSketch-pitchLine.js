@@ -247,6 +247,11 @@ function draw () {
         strokeWeight(4);
         line(svaraLineX1+i, lineY1, svaraLineX1+i+1, lineY2);
       }
+      if (samList.includes(lineX1)) {
+        stroke(frontColor);
+        strokeWeight(1);
+        line(svaraLineX1+i, cursorTop, svaraLineX1+i, cursorBottom);
+      }
     }
     var p = pitchTrack[cT.toFixed(2)];
     if (p != "s" && p >= minHz && p <= maxHz) { // && showCursor.checked()) {
