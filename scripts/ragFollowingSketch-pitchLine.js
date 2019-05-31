@@ -466,6 +466,25 @@ function CreateNavigationBox () {
   this.clicked = function () {
     if (mouseX > this.x1 && mouseX < this.x2 && mouseY > this.y1 && mouseY < this.y2) {
       jump = map(mouseX, this.x1, this.x2, 0, trackDuration);
+      if (jump < phrases[0].s) {
+        phraseIndex = 0;
+      } else if (jump > phrases[phrases.length-1].e) {
+        phraseIndex = phrases.length-1;
+      } else if (jump < phrases[phraseIndex].s) {
+        print(phraseIndex);
+        while (jump < phrases[phraseIndex].e) {
+          phraseIndex--;
+          print(phraseIndex);
+        }
+        phraseIndex++;
+      } else if (jump > phrases[phraseIndex].e) {
+        while (jump > phrases[phraseIndex].e) {
+          phraseIndex++;
+        }
+      }
+      if (jump <= phrases[phraseIndex].e && jump >= phrases[phraseIndex].s) {
+        currentPhrase = phrases[phraseIndex].l;
+      }
       if (paused) {
         currentTime = jump;
       } else {
@@ -500,6 +519,7 @@ function CreateNavCursor () {
 
     if (currentTime > phrases[phraseIndex].e) {
       if (phraseIndex < phrases.length-1) {
+        print(currentTime, phrases[phraseIndex].e);
         phraseIndex++;
         print(phraseIndex);
         if (currentTime >= phrases[phraseIndex].s) {
@@ -733,99 +753,99 @@ function createSound (svara) {
 //   }
 // }
 
-function CreateStrokeCircle (matra, vibhag, circleType, bol, avart) {
-  this.bol = bol;
-  var increment = 1;
-  this.strokeWeight = 2;
-  this.txtW = 0;
-
-  if (circleType == "sam") {
-    if (vibhag == "tali") {
-      this.col = frontColor;
-      this.txtCol = backColor;
-    } else {
-      this.col = backColor;
-      this.txtCol = frontColor;
-    }
-  } else if (vibhag == "tali") {
-    this.col = frontColor;
-    this.txtCol = backColor;
-  } else if (vibhag == "khali") {
-    this.col = backColor;
-    this.txtCol = frontColor;
-  }
-
-  if (circleType == "sam") {
-    this.radius = strokeRadius1;
-    this.txtSize = strokeRadius1 * 0.7;
-    this.txtStyle = BOLD;
-    this.bol = this.bol.toUpperCase();
-  } else if (circleType == 1) {
-    this.radius = strokeRadius1;
-    this.txtSize = strokeRadius1 * 0.75;
-    this.txtStyle = BOLD;
-  } else if (circleType == 2){
-    this.radius = strokeRadius2;
-    this.txtSize = strokeRadius2 * 0.75;
-    this.txtStyle = BOLD;
-  } else {
-    this.radius = strokeRadius2;
-    this.txtSize = strokeRadius2 * 0.75;
-    this.col = color(0, 0);
-    this.txtCol = frontColor;
-    this.txtStyle = NORMAL;
-    this.strokeWeight = 0;
-    this.txtW = 1;
-    increment = 1.05;
-  }
-
-  this.circleAngle = map(matra, 0, avart, 0, 360);
-  this.x = talRadius * increment * cos(this.circleAngle);
-  this.y = talRadius * increment * sin(this.circleAngle);
-
-  this.display = function () {
-    push();
-    translate(this.x, this.y);
-    stroke(frontColor);
-    strokeWeight(this.strokeWeight);
-    fill(this.col);
-    ellipse(0, 0, this.radius, this.radius);
-    pop();
-  }
-
-  this.displayTheka = function () {
-    push();
-    translate(this.x, this.y);
-    textAlign(CENTER, CENTER);
-    stroke(backColor);
-    strokeWeight(this.txtW);
-    fill(this.txtCol);
-    textSize(this.txtSize);
-    textStyle(this.txtStyle);
-    rotate(90);
-    text(this.bol, 0, 0);
-    pop();
-  }
-}
-
-function CreateIcon (matra, vibhag, avart) {
-  this.circleAngle = map(matra, 0, avart, 0, 360);
-  this.x = talRadius * iconDistance * cos(this.circleAngle);
-  this.y = talRadius * iconDistance * sin(this.circleAngle);
-  if (vibhag == "tali") {
-    this.img = clap;
-  } else if (vibhag == "khali") {
-    this.img = wave;
-  }
-
-  this.display = function () {
-    push();
-    translate(this.x, this.y);
-    rotate(90);
-    image(this.img, 0, 0, strokeRadius2*2, strokeRadius2*2);
-    pop();
-  }
-}
+// function CreateStrokeCircle (matra, vibhag, circleType, bol, avart) {
+//   this.bol = bol;
+//   var increment = 1;
+//   this.strokeWeight = 2;
+//   this.txtW = 0;
+//
+//   if (circleType == "sam") {
+//     if (vibhag == "tali") {
+//       this.col = frontColor;
+//       this.txtCol = backColor;
+//     } else {
+//       this.col = backColor;
+//       this.txtCol = frontColor;
+//     }
+//   } else if (vibhag == "tali") {
+//     this.col = frontColor;
+//     this.txtCol = backColor;
+//   } else if (vibhag == "khali") {
+//     this.col = backColor;
+//     this.txtCol = frontColor;
+//   }
+//
+//   if (circleType == "sam") {
+//     this.radius = strokeRadius1;
+//     this.txtSize = strokeRadius1 * 0.7;
+//     this.txtStyle = BOLD;
+//     this.bol = this.bol.toUpperCase();
+//   } else if (circleType == 1) {
+//     this.radius = strokeRadius1;
+//     this.txtSize = strokeRadius1 * 0.75;
+//     this.txtStyle = BOLD;
+//   } else if (circleType == 2){
+//     this.radius = strokeRadius2;
+//     this.txtSize = strokeRadius2 * 0.75;
+//     this.txtStyle = BOLD;
+//   } else {
+//     this.radius = strokeRadius2;
+//     this.txtSize = strokeRadius2 * 0.75;
+//     this.col = color(0, 0);
+//     this.txtCol = frontColor;
+//     this.txtStyle = NORMAL;
+//     this.strokeWeight = 0;
+//     this.txtW = 1;
+//     increment = 1.05;
+//   }
+//
+//   this.circleAngle = map(matra, 0, avart, 0, 360);
+//   this.x = talRadius * increment * cos(this.circleAngle);
+//   this.y = talRadius * increment * sin(this.circleAngle);
+//
+//   this.display = function () {
+//     push();
+//     translate(this.x, this.y);
+//     stroke(frontColor);
+//     strokeWeight(this.strokeWeight);
+//     fill(this.col);
+//     ellipse(0, 0, this.radius, this.radius);
+//     pop();
+//   }
+//
+//   this.displayTheka = function () {
+//     push();
+//     translate(this.x, this.y);
+//     textAlign(CENTER, CENTER);
+//     stroke(backColor);
+//     strokeWeight(this.txtW);
+//     fill(this.txtCol);
+//     textSize(this.txtSize);
+//     textStyle(this.txtStyle);
+//     rotate(90);
+//     text(this.bol, 0, 0);
+//     pop();
+//   }
+// }
+//
+// function CreateIcon (matra, vibhag, avart) {
+//   this.circleAngle = map(matra, 0, avart, 0, 360);
+//   this.x = talRadius * iconDistance * cos(this.circleAngle);
+//   this.y = talRadius * iconDistance * sin(this.circleAngle);
+//   if (vibhag == "tali") {
+//     this.img = clap;
+//   } else if (vibhag == "khali") {
+//     this.img = wave;
+//   }
+//
+//   this.display = function () {
+//     push();
+//     translate(this.x, this.y);
+//     rotate(90);
+//     image(this.img, 0, 0, strokeRadius2*2, strokeRadius2*2);
+//     pop();
+//   }
+// }
 
 function CreateTalBox (tal) {
   if (tal.tal[tal.tal.length-1] == 'l') {
