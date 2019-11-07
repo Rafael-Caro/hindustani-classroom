@@ -159,7 +159,10 @@ function setup () {
   noRec[0].setAttribute("style", "display: none");
   recordingsList = recordingsList.recordingsList;
   for (var i = 0; i < recordingsList.length; i++) {
-    selectMenu.option(recordingsList[i].selectOption, i);
+    var opt = recordingsList[i].selectOption;
+    if (!opt.includes('calan')) {
+      selectMenu.option(opt, i);
+    }
   }
   buttonPlay = createButton(lang_load)
     .size(120, 25)
