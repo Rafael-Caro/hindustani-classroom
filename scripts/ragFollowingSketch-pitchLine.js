@@ -1,6 +1,6 @@
 var extraSpaceH = 45;
 var extraSpaceW = 0;
-var spaceWidth = 800;
+var spaceWidth = 1070;
 var spaceHeight = 600;
 var margin = 10;
 var easing = 0.5;
