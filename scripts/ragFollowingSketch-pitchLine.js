@@ -428,25 +428,6 @@ function CreateNavigationBox () {
   this.clicked = function () {
     if (mouseX > this.x1 && mouseX < this.x2 && mouseY > this.y1 && mouseY < this.y2) {
       jump = map(mouseX, this.x1, this.x2, 0, trackDuration);
-      // if (jump < phrases[0].s) {
-      //   phraseIndex = 0;
-      // } else if (jump > phrases[phrases.length-1].e) {
-      //   phraseIndex = phrases.length-1;
-      // } else if (jump < phrases[phraseIndex].s) {
-      //   print(phraseIndex);
-      //   while (jump < phrases[phraseIndex].e) {
-      //     phraseIndex--;
-      //     print(phraseIndex);
-      //   }
-      //   phraseIndex++;
-      // } else if (jump > phrases[phraseIndex].e) {
-      //   while (jump > phrases[phraseIndex].e) {
-      //     phraseIndex++;
-      //   }
-      // }
-      // if (jump <= phrases[phraseIndex].e && jump >= phrases[phraseIndex].s) {
-      //   currentPhrase = phrases[phraseIndex].l;
-      // }
       if (paused) {
         currentTime = jump;
       } else {
@@ -474,29 +455,6 @@ function CreateNavCursor () {
         talBox.off();
       }
     }
-    // if (noTal) {
-    //   currentTal = undefined;
-    //   talName = undefined;
-    // }
-
-    // if (currentTime > phrases[phraseIndex].e) {
-    //   if (phraseIndex < phrases.length-1) {
-    //     print(currentTime, phrases[phraseIndex].e);
-    //     phraseIndex++;
-    //     print(phraseIndex);
-    //     if (currentTime >= phrases[phraseIndex].s) {
-    //       currentPhrase = phrases[phraseIndex].l;
-    //     } else {
-    //       currentPhrase = undefined;
-    //     }
-    //   } else {
-    //     currentPhrase = undefined;
-    //   }
-    // } else if (currentTime < phrases[phraseIndex].s) {
-    //   currentPhrase = undefined;
-    // } else {
-    //   currentPhrase = phrases[phraseIndex].l;
-    // }
 
     if (navBox.x2 - navCursorW/2 - this.x < 0.1) {
       buttonPlay.html(lang_start);
@@ -595,18 +553,19 @@ function CreatePhrase (phrase, label, index, total) {
   for (var i = 0; i < phrase.length; i++) {
     var start = phrase[i].s;
     var end = phrase[i].e;
-    for(var i = start; i <= end; i+=0.01) {
-      phrasesTimestamps.push(i.toFixed(2));
+    for(var j = start; j <= end; j+=0.01) {
+      phrasesTimestamps.push(j.toFixed(2));
     }
     var phraseBox = new CreatePhraseBox(start, end);
     this.phraseBoxes.push(phraseBox);
   }
+  this.selected = false;
 
   this.update = function () {
     for (var i = 0; i < this.phraseBoxes.length; i++) {
       var s = this.phraseBoxes[i].start;
       var e = this.phraseBoxes[i].end;
-      if (currentTime >= s && currentTime <= e) {
+      if ((currentTime >= s && currentTime <= e) || this.selected) {
         this.fill = color(255, 230);
         this.stroke = frontColor;
         this.strokeWeight = 2;
@@ -638,6 +597,25 @@ function CreatePhrase (phrase, label, index, total) {
     textSize(phraseH * 0.35);
     fill(this.lfill);
     text(this.label, this.x+this.w/2, this.center+phraseH*0.1);
+    if (this.selected) {
+      for (var i = 0; i < this.phraseBoxes.length; i++) {
+        this.phraseBoxes[i].display();
+      }
+    }
+  }
+
+  this.clicked = function () {
+    if (mouseX > this.x && mouseX < this.x+this.w &&
+        mouseY > this.y && mouseY < this.y+this.h) {
+      if (this.selected) {
+        this.selected = false;
+      } else {
+        for (var i = 0; i < phrasesList.length; i++) {
+          phrasesList[i].selected = false;
+        }
+        this.selected = true;
+      }
+    }
   }
 }
 
@@ -647,14 +625,14 @@ function CreatePhraseBox (start, end) {
   this.x1 = map(this.start, 0, trackDuration, navBox.x1, navBox.x2);
   this.x2 = map(this.end, 0, trackDuration, navBox.x1, navBox.x2);
   this.w = this.x2 - this.x1;
-  this.y1 = navBox.y1 + navBoxH / 4;
-  this.y2 = navBox.y2 - navBoxH / 4;
+  this.y1 = navBox.y1 + navBoxH / 2 + 2;
+  this.y2 = navBox.y2 - 1;
   this.h = this.y2 - this.y1;
 
   this.display = function () {
     stroke(255, 0, 0);
-    strokeWeight(1);
-    fill(255, 100);
+    strokeWeight(3);
+    fill(255, 230);
     rect(this.x1, this.y1, this.w, this.h);
   }
 }
@@ -771,28 +749,12 @@ function failedLoad () {
   failedLoading = true;
 }
 
-// function fillMelodicLineColor (phrases) {
-//   var phrase_i = 0;
-//   var phrase = phrases[phrase_i];
-//   var pointColor = 0;
-//   for (var i = 0; i < trackDuration * 100; i++) {
-//     var t = i / 100;
-//     if (t == phrase.s) {
-//       pointColor = 1;
-//     } else if (t == phrase.e) {
-//       pointColor = 0;
-//       phrase_i++;
-//       if (phrase_i < phrases.length) {
-//         phrase = phrases[phrase_i];
-//       }
-//     }
-//     phrasesTimestamps[t] = pointColor;
-//   }
-// }
-
 function mouseClicked () {
   if (loaded) {
     navBox.clicked();
+  }
+  for (var i = 0; i < phrasesList.length; i++) {
+    phrasesList[i].clicked();
   }
 }
 
