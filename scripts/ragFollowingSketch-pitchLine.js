@@ -2,7 +2,9 @@ var extraSpaceH = 45;
 var extraSpaceW = 200;
 var spaceWidth = 870;
 var spaceHeight = 600;
-var margin = 10;
+var title_x = 20;
+var title_y = 20;
+var title_size = 20;
 var easing = 0.5;
 var backColor;
 var backColorTrans;
@@ -23,8 +25,8 @@ var svaraLine = 20;
 // var minHz;
 // var maxHz;
 var pitchTrack;
-var melodicLine = [];
-var melodicLineColor = {};
+// var melodicLine = {};
+var phrasesTimestamps = [];
 var trackFile;
 var track;
 var trackDuration;
@@ -34,9 +36,6 @@ var link;
 
 var selectMenu;
 var buttonPlay;
-// var showTheka;
-// var showTal;
-// var showCursor;
 
 var cursorTop;
 var cursorBottom;
@@ -60,8 +59,8 @@ var talRadius;
 var talBoxes = [];
 var talList = {};
 var talCircles = {};
-var talName = undefined;
-var currentTal = undefined;
+// var talName = undefined;
+// var currentTal = undefined;
 // var currentAvart;
 var strokeRadius1 = 20;
 var strokeRadius2 = 15;
@@ -116,18 +115,13 @@ function setup () {
   frontColor = color(120, 0, 0);
   shadeColor = color(120, 0, 0);
 
-  // charger = new CreateCharger();
   navBox = new CreateNavigationBox();
   navCursor = new CreateNavCursor();
-  // talCursor = new CreateTalCursor();
 
-  cursorTop = extraSpaceH + margin*6 + 15 + svaraRadius*2;
-  cursorBottom = navBox.y1-margin*4;
-  // talX = extraSpaceW + margin + (mainSpace-2*margin)/3;
-  // talY = cursorTop + (cursorBottom-cursorTop)/2.8 + strokeRadius1/2;
-  // talRadius = (cursorBottom-cursorTop)/2.8;// (mainSpace-2*margin)*0.25;
-  melCursorX = width - (svaraRadius * 4) - svaraLine - (margin * 2);
-  svaraLineX1 = extraSpaceW + (svaraRadius * 4) + svaraLine + margin;
+  cursorTop = extraSpaceH + title_y + title_size + 20 + svaraRadius;
+  cursorBottom = navBox.y1 - 20 - svaraRadius;
+  melCursorX = width - (svaraRadius * 4) - svaraLine - 20;
+  svaraLineX1 = extraSpaceW + (svaraRadius * 4) + svaraLine + 10;
 
   //Language
   var lang = select("html").elt.lang;
@@ -150,11 +144,10 @@ function setup () {
   }
 
   infoLink = select("#sa-info-link");
-  // infoLink.position(width-60, extraSpaceH + margin*3.5 + 30);
-  infoLink.position(width - margin - 45, extraSpaceH + margin);
+  infoLink.position(width - 10 - 45, extraSpaceH + 10);
   selectMenu = createSelect()
-    .size(120, 25)
-    .position(margin, margin)
+    .size(extraSpaceW-20, 25)
+    .position(10, 10)
     .changed(start)
     .parent("sketch-holder");
   selectMenu.option(lang_select);
@@ -169,34 +162,10 @@ function setup () {
   }
   buttonPlay = createButton(lang_load)
     .size(120, 25)
-    .position(width - 120 - margin, margin)
+    .position(width - 120 - 10, 10)
     .mouseClicked(player)
     .attribute("disabled", "true")
     .parent("sketch-holder");
-
-  // showTheka = createCheckbox(' ṭhekā', true)
-  //   .position(extraSpaceW + margin, talY + talRadius)
-  //   .parent("sketch-holder");
-  // showTal = createCheckbox(' tāl', true)
-  //   .position(extraSpaceW + margin, showTheka.position()["y"] + showTheka.height)
-  //   .changed(function() {
-  //     showTheka.checked(showTal.checked());
-  //     if (showTal.checked()) {
-  //       showTheka.removeAttribute("disabled");
-  //     } else {
-  //       showTheka.attribute("disabled", "true");
-  //     }
-  //   })
-  //   .parent("sketch-holder");
-  // showCursor = createCheckbox(' cursor', true)
-  //   .position(margin, showTal.position()["y"]+showTal.height)
-  //   .parent("sketch-holder");
-  // showTheka.attribute("disabled", "true");
-  // showTheka.attribute("style", "color:rgba(120, 0, 0, 0.5);");
-  // showTal.attribute("disabled", "true");
-  // showTal.attribute("style", "color:rgba(120, 0, 0, 0.5);");
-  // showCursor.attribute("disabled", "true");
-  // showCursor.attribute("style", "color:rgba(120, 0, 0, 0.5);");
 }
 
 function draw () {
@@ -204,31 +173,26 @@ function draw () {
   noStroke();
   rect(extraSpaceW, extraSpaceH, width, height);
 
-  textAlign(LEFT, BASELINE);
+  textAlign(LEFT, BOTTOM);
   textStyle(NORMAL);
-  textSize(30);
+  textSize(title_size);
   strokeWeight(5);
   stroke(frontColor);
   fill(backColor);
   if (ragName != undefined) {
     var ragW = textWidth(ragName);
   }
-  text(ragName, extraSpaceW + margin*4, extraSpaceH + margin*5);
+  text(ragName, extraSpaceW + title_x, extraSpaceH + title_y + title_size);
 
   stroke(0, 50);
   strokeWeight(1);
-  line(extraSpaceW + margin*2, extraSpaceH + margin*6, width - margin*2, extraSpaceH + margin*6);
+  line(extraSpaceW + 20, extraSpaceH + title_y + title_size + 10, width - 20, extraSpaceH + title_y + title_size + 10);
 
   stroke(0, 150);
   strokeWeight(1);
-  textSize(20);
+  textSize(title_size*0.9);
   fill(0, 150);
-  text(" - " + artist, extraSpaceW + margin*4 + ragW, extraSpaceH + margin*5);
-
-  // stroke("red");
-  // line(0, cursorTop, width, cursorTop);
-  // stroke("green");
-  // line(0, cursorBottom, width, cursorBottom);
+  text(" - " + artist, extraSpaceW + title_x + ragW, extraSpaceH + title_y + title_size);
 
   for (var i = 0; i < svaraList.length; i++) {
     svaraList[i].displayLines();
@@ -244,122 +208,59 @@ function draw () {
     navCursor.display();
     clock.display();
 
-    if (currentPhrase == undefined) {
-      noFill();
-    } else {
-      fill(255, 150);
-    }
-    stroke(frontColor);
-    strokeWeight(2);
-    // rect(width * 0.82 - 40, extraSpaceH + margin*5 + 30, 80, 30, 20);
-    rect(extraSpaceW + spaceWidth/2 - 40, extraSpaceH + margin*7, 80, 30, 20);
+    // if (currentPhrase == undefined) {
+    //   noFill();
+    // } else {
+    //   fill(255, 150);
+    // }
+    // stroke(frontColor);
+    // strokeWeight(2);
+    // rect(extraSpaceW + spaceWidth/2 - 40, extraSpaceH + 70, 80, 30, 20);
 
-    textAlign(CENTER, TOP);
-    textStyle(NORMAL);
-    textSize(15);
-    fill(0, 150);
-    stroke(0, 150);
-    strokeWeight(1);
-    text(currentPhrase, extraSpaceW + spaceWidth/2, extraSpaceH + margin*8);
+    // textAlign(CENTER, TOP);
+    // textStyle(NORMAL);
+    // textSize(15);
+    // fill(0, 150);
+    // stroke(0, 150);
+    // strokeWeight(1);
+    // text(currentPhrase, extraSpaceW + spaceWidth/2, extraSpaceH + 80);
 
     if (!paused) {
       currentTime = track.currentTime();
     }
 
-    var cT = currentTime;
     for (var i = 0; i < melCursorX - svaraLineX1; i++) {
-      var lineX1 = (int(cT * 100) - (melCursorX - svaraLineX1 - i)) / 100;
+      var thisPoint = melCursorX - svaraLineX1 - i;
+      var lineX1 = (int(currentTime * 100) - thisPoint) / 100;
       if (samList.includes(lineX1)) {
         stroke(frontColor);
         strokeWeight(1);
-        line(svaraLineX1+i, cursorTop, svaraLineX1+i, cursorBottom);
+        line(svaraLineX1+i, cursorTop-svaraRadius, svaraLineX1+i, cursorBottom);
       }
       var lineX2 = lineX1 + 0.01;
       var lineY1 = map(pitchTrack[lineX1.toFixed(2)], -700, 1900, cursorBottom, cursorTop);
       var lineY2 = map(pitchTrack[lineX2.toFixed(2)], -700, 1900, cursorBottom, cursorTop);
       if (lineY1 <= cursorBottom && lineY1 >= cursorTop && lineY2 <= cursorBottom && lineY2 >= cursorTop) {
-        if (melodicLineColor[lineX1.toFixed(2)] == 0) {
-          stroke(255);
-        } else if (melodicLineColor[lineX1.toFixed(2)] == 1) {
+        if (phrasesTimestamps.includes(lineX1.toFixed(2))) {
           stroke(255, 0, 0);
+          fill(255, 0, 0);
+        } else {
+          stroke(255);
+          fill(255);
         }
         strokeWeight(4);
         line(svaraLineX1+i, lineY1, svaraLineX1+i+1, lineY2);
       }
     }
-    var p = pitchTrack[cT.toFixed(2)];
-    if (p != "s" && p >= -700 && p <= 1900) { // && showCursor.checked()) {
+    var p = pitchTrack[currentTime.toFixed(2)];
+    if (p != "s" && p >= -700 && p <= 1900) {
       var targetY = map(p, -700, 1900, cursorBottom, cursorTop);
       cursorY += (targetY - cursorY) * easing;
-      if (melodicLineColor[cT.toFixed(2)] == 1) {
-        fill(255, 0, 0);
-      } else {
-        fill(255);
-      }
       stroke(frontColor);
       strokeWeight(1);
       ellipse(melCursorX, cursorY, melCursorRadius, melCursorRadius);
     }
   }
-
-  // push();
-  // translate(talX, talY);
-  //
-  // if (failedLoading) {
-  //   textAlign(CENTER, CENTER);
-  //   textSize(15)
-  //   noStroke()
-  //   fill(0)
-  //   text(lang_error, 0, 0);
-  // }
-  //
-  // rotate(-90);
-  //
-  // if (loaded) {
-  //   noFill();
-  //   stroke(frontColor);
-  //   strokeWeight(2);
-  //   ellipse(0, 0, talRadius, talRadius);
-  //
-  //   if (showTal.checked()) {
-  //     shade.update();
-  //     shade.display();
-  //   }
-  //
-  //   if (currentTal != undefined && showTal.checked()) {
-  //     var talToDraw = talCircles[currentTal];
-  //     for (var i = 0; i < talToDraw.strokeCircles.length; i++) {
-  //       talToDraw.strokeCircles[i].display();
-  //     }
-  //     if (showTheka.checked()) {
-  //       for (var i = 0; i < talToDraw.strokeCircles.length; i++) {
-  //         talToDraw.strokeCircles[i].displayTheka();
-  //       }
-  //       for (var i = 0; i < talToDraw.icons.length; i++) {
-  //         talToDraw.icons[i].display();
-  //       }
-  //     }
-  //   }
-  //   talCursor.update();
-  //   talCursor.display();
-  // } else {
-  //   charger.update();
-  //   charger.display();
-  //   talCursor.loadingUpdate();
-  //   talCursor.display();
-  // }
-  //
-  // pop();
-
-  // if (showTal.checked()) {
-  //   textAlign(CENTER, CENTER);
-  //   textSize(20);
-  //   textStyle(NORMAL);
-  //   stroke(backColor);
-  //   strokeWeight(5);
-  //   fill(frontColor);
-  //   text(talName, talX, talY);
-  // }
 
   for (var i = 0; i < talBoxes.length; i++) {
     talBoxes[i].display();
@@ -370,7 +271,7 @@ function draw () {
   textStyle(NORMAL);
   noStroke();
   fill(frontColor);
-  text(mpmTxt, extraSpaceW + margin + 65, navBox.y1 - margin/2);
+  text(mpmTxt, extraSpaceW + 10 + 65, navBox.y1 - 5);
 
   navBox.displayFront();
 }
@@ -384,12 +285,16 @@ function start () {
   currentTime = 0;
   talBoxes = [];
   talList = [];
-  talName = undefined;
+  // talName = undefined;
   samList = [];
-  currentTal = undefined;
-  // charger.angle = undefined;
+  // currentTal = undefined;
   mpmTxt = undefined;
-  melodicLineColor = {};
+  currentPhrase = undefined;
+  // melodicLine = {}
+  phrasesTimestamps = [];
+  svaraList = [];
+  soundList = {};
+
   var currentRecording = recordingsInfo[recordingsList[selectMenu.value()].mbid];
   trackFile = currentRecording.info.trackFile;
   var rag = ragInfo[currentRecording.rag.rag];
@@ -402,10 +307,6 @@ function start () {
     .html("+info");
   trackDuration = currentRecording.info.duration;
   pitchSpace = rag.pitchSpace;
-  // minHz = pitchSpace[0].cent-100;
-  // maxHz = pitchSpace[pitchSpace.length-1].cent+100;
-  svaraList = [];
-  soundList = {};
   var key;
   var keyIndex = 0;
   for (var i = 0; i < pitchSpace.length; i++) {
@@ -456,16 +357,18 @@ function start () {
       }
       var svara = new CreateSvara(svaraName, cents, rag.vadi, rag.samvadi, key);
       svaraList.push(svara);
-      // createSound(pitchSpace[i]);
     }
   }
   phrases = currentRecording.rag.phrases;
-  currentPhrase = undefined;
-  phraseIndex = 0;
-  if (phrases.length > 0) {
-    fillMelodicLineColor(phrases);
+  var labels = Object.keys(phrases);
+  if (labels.length > 0) {
+    for (var i = 0; i < labels.length; i++) {
+      var phrase = new CreatePhrase(phrases[labels[i]], labels[i], i, labels.length);
+    }
   }
+
   pitchTrack = loadJSON('../files/pitchTracks/'+recordingsList[selectMenu.value()].mbid+'_pitchTrack.json');
+
   for (var i = 0; i < currentRecording.talList.length; i++) {
     var tal = currentRecording.talList[i];
     talList[tal.tal] = {
@@ -476,31 +379,19 @@ function start () {
     samList = samList.concat(tal.sam);
     var talBox = new CreateTalBox(tal);
     talBoxes.push(talBox);
-    // var talCircle = new CreateTalCircle(talBox.tal);
-    // talCircles[tal.tal] = talCircle;
   }
-  // currentAvart = new CreateCurrentAvart();
-  // shade = new CreateShade();
+
   clock = new CreateClock;
 
-  // showTheka.attribute("disabled", "true");
-  // showTheka.attribute("style", "color:rgba(120, 0, 0, 0.5);");
-  // showTheka.checked("true");
-  // showTal.attribute("disabled", "true");
-  // showTal.attribute("style", "color:rgba(120, 0, 0, 0.5);");
-  // showTal.checked("true");
-  // showCursor.attribute("disabled", "true");
-  // showCursor.attribute("style", "color:rgba(120, 0, 0, 0.5);");
-  // showCursor.checked("true");
   buttonPlay.html(lang_load);
   buttonPlay.removeAttribute("disabled");
 }
 
 function CreateNavigationBox () {
-  this.x1 = extraSpaceW + margin;
-  this.x2 = width - margin;
-  this.y1 = height - margin - navBoxH;
-  this.y2 = height - margin;
+  this.x1 = extraSpaceW + 10;
+  this.x2 = width - 10;
+  this.y1 = height - 10 - navBoxH;
+  this.y2 = height - 10;
   this.w = this.x2 - this.x1;
 
   this.displayBack = function () {
@@ -528,25 +419,25 @@ function CreateNavigationBox () {
   this.clicked = function () {
     if (mouseX > this.x1 && mouseX < this.x2 && mouseY > this.y1 && mouseY < this.y2) {
       jump = map(mouseX, this.x1, this.x2, 0, trackDuration);
-      if (jump < phrases[0].s) {
-        phraseIndex = 0;
-      } else if (jump > phrases[phrases.length-1].e) {
-        phraseIndex = phrases.length-1;
-      } else if (jump < phrases[phraseIndex].s) {
-        print(phraseIndex);
-        while (jump < phrases[phraseIndex].e) {
-          phraseIndex--;
-          print(phraseIndex);
-        }
-        phraseIndex++;
-      } else if (jump > phrases[phraseIndex].e) {
-        while (jump > phrases[phraseIndex].e) {
-          phraseIndex++;
-        }
-      }
-      if (jump <= phrases[phraseIndex].e && jump >= phrases[phraseIndex].s) {
-        currentPhrase = phrases[phraseIndex].l;
-      }
+      // if (jump < phrases[0].s) {
+      //   phraseIndex = 0;
+      // } else if (jump > phrases[phrases.length-1].e) {
+      //   phraseIndex = phrases.length-1;
+      // } else if (jump < phrases[phraseIndex].s) {
+      //   print(phraseIndex);
+      //   while (jump < phrases[phraseIndex].e) {
+      //     phraseIndex--;
+      //     print(phraseIndex);
+      //   }
+      //   phraseIndex++;
+      // } else if (jump > phrases[phraseIndex].e) {
+      //   while (jump > phrases[phraseIndex].e) {
+      //     phraseIndex++;
+      //   }
+      // }
+      // if (jump <= phrases[phraseIndex].e && jump >= phrases[phraseIndex].s) {
+      //   currentPhrase = phrases[phraseIndex].l;
+      // }
       if (paused) {
         currentTime = jump;
       } else {
@@ -567,36 +458,36 @@ function CreateNavCursor () {
       var talBox = talBoxes[i];
       if (this.x > talBox.x1 && this.x < talBox.x2) {
         talBox.on();
-        currentTal = talBox.talIndex;
-        talName = talBox.fullName;
+        // currentTal = talBox.talIndex;
+        // talName = talBox.fullName;
         noTal = false;
       } else {
         talBox.off();
       }
     }
-    if (noTal) {
-      currentTal = undefined;
-      talName = undefined;
-    }
+    // if (noTal) {
+    //   currentTal = undefined;
+    //   talName = undefined;
+    // }
 
-    if (currentTime > phrases[phraseIndex].e) {
-      if (phraseIndex < phrases.length-1) {
-        print(currentTime, phrases[phraseIndex].e);
-        phraseIndex++;
-        print(phraseIndex);
-        if (currentTime >= phrases[phraseIndex].s) {
-          currentPhrase = phrases[phraseIndex].l;
-        } else {
-          currentPhrase = undefined;
-        }
-      } else {
-        currentPhrase = undefined;
-      }
-    } else if (currentTime < phrases[phraseIndex].s) {
-      currentPhrase = undefined;
-    } else {
-      currentPhrase = phrases[phraseIndex].l;
-    }
+    // if (currentTime > phrases[phraseIndex].e) {
+    //   if (phraseIndex < phrases.length-1) {
+    //     print(currentTime, phrases[phraseIndex].e);
+    //     phraseIndex++;
+    //     print(phraseIndex);
+    //     if (currentTime >= phrases[phraseIndex].s) {
+    //       currentPhrase = phrases[phraseIndex].l;
+    //     } else {
+    //       currentPhrase = undefined;
+    //     }
+    //   } else {
+    //     currentPhrase = undefined;
+    //   }
+    // } else if (currentTime < phrases[phraseIndex].s) {
+    //   currentPhrase = undefined;
+    // } else {
+    //   currentPhrase = phrases[phraseIndex].l;
+    // }
 
     if (navBox.x2 - navCursorW/2 - this.x < 0.1) {
       buttonPlay.html(lang_start);
@@ -678,6 +569,23 @@ function CreateSvara (svara, cents, vadi, samvadi, key) {
   }
 }
 
+function CreatePhrase (phrase, label, index, total) {
+  this.label = label;
+  this.index = index;
+  this.phraseBoxes = [];
+  for (var i = 0; i < phrase.length; i++) {
+    var s = phrase[i].s;
+    var e = phrase[i].e;
+    for(var i = s; i <= e; i+=0.01) {
+      phrasesTimestamps.push(i.toFixed(2));
+    }
+  }
+}
+
+function CreatePhraseBox (x, y) {
+
+}
+
 function createSound (cents, sa, key) {
   this.pitch = sa * (2 ** (cents/1200.));
   this.osc = new p5.Oscillator();
@@ -685,223 +593,6 @@ function createSound (cents, sa, key) {
   this.osc.freq(this.pitch);
   soundList[key] = this.osc;
 }
-
-// function CreateTalCursor () {
-//   this.x;
-//   this.y;
-//
-//   this.update = function () {
-//     this.angle = map(currentTime, currentAvart.start, currentAvart.end, 0, 360);
-//     this.x = talRadius * cos(this.angle);
-//     this.y = talRadius * sin(this.angle);
-//   }
-//
-//   this.loadingUpdate = function () {
-//     this.x = talRadius * cos(charger.angle);
-//     this.y = talRadius * sin(charger.angle);
-//   }
-//
-//   this.display = function () {
-//     fill("red");
-//     stroke(frontColor);
-//     strokeWeight(1);
-//     ellipse(this.x, this.y, 5, 5)
-//   }
-// }
-
-// function CreateShade () {
-//   this.x;
-//   this.y;
-//   this.angle;
-//   this.alpha;
-//   this.col = shadeColor;
-//
-//   this.update = function () {
-//     if (!(currentTime >= currentAvart.start && currentTime <= currentAvart.end)) {
-//       currentAvart.update();
-//     }
-//     this.angle = map(currentTime, currentAvart.start, currentAvart.end, 0, 360);
-//     this.alpha = map(this.angle, 0, 360, 0, 255);
-//     this.x = talRadius * cos(this.angle);
-//     this.y = talRadius * sin(this.angle);
-//   }
-//   this.display = function () {
-//     this.col.setAlpha(this.alpha);
-//     fill(this.col);
-//     noStroke();
-//     arc(0, 0, talRadius, talRadius, 0, this.angle);
-//     stroke(frontColor);
-//     strokeWeight(1);
-//     line(0, 0, this.x, this.y);
-//   }
-// }
-
-// function CreateCurrentAvart () {
-//   this.index;
-//   this.tal;
-//   this.sam;
-//   this.start;
-//   this.end;
-//   this.findIndex = function () {
-//     while (currentTime > this.sam[this.index+1]) {
-//       this.index++;
-//     }
-//     while (currentTime < this.sam[this.index]) {
-//       this.index--;
-//     }
-//   }
-//   this.update = function () {
-//     if (currentTal == undefined) {
-//       this.start = undefined;
-//       this.end = undefined;
-//       mpmTxt = undefined;
-//     } else {
-//       if (this.tal == currentTal) {
-//         this.findIndex();
-//       } else {
-//         this.tal = currentTal
-//         this.sam = talList[this.tal].sam;
-//         this.index = 0;
-//         this.findIndex();
-//       }
-//       this.start = this.sam[this.index];
-//       this.end = this.sam[this.index+1];
-//       var mpm = 60 / ((this.end - this.start) / talInfo[currentTal].avart);
-//       mpmTxt = str(mpm.toFixed(1)) + " mpm"
-//     }
-//   }
-// }
-
-// function CreateTalCircle (tal) {
-//   this.strokeCircles = [];
-//   this.icons = [];
-//   this.avart;
-//
-//   var tal = talInfo[tal];
-//   this.avart = tal.avart;
-//   var theka = tal.theka;
-//   for (var i = 0; i < theka.length; i++) {
-//     var stroke = theka[i];
-//     var matra = stroke.matra;
-//     var vibhag; //tali or khali
-//     if (int(stroke.vibhag) > 0) {
-//       vibhag = "tali";
-//     } else {
-//       vibhag = "khali";
-//     }
-//     var circleType;
-//     if (i == 0) {
-//       circleType = "sam";
-//       var icon = new CreateIcon(matra, vibhag, this.avart);
-//       this.icons.push(icon);
-//     } else if ((stroke.vibhag % 1) < 0.101) {
-//       circleType = 1;
-//       var icon = new CreateIcon(matra, vibhag, this.avart);
-//       this.icons.push(icon);
-//     } else if ((stroke.vibhag * 10 % 1) == 0) {
-//       circleType = 2;
-//     } else {
-//       circleType = 3;
-//     }
-//     var bol = stroke.bol;
-//     var strokeCircle = new CreateStrokeCircle(matra, vibhag, circleType, bol, this.avart);
-//     this.strokeCircles.push(strokeCircle);
-//   }
-// }
-
-// function CreateStrokeCircle (matra, vibhag, circleType, bol, avart) {
-//   this.bol = bol;
-//   var increment = 1;
-//   this.strokeWeight = 2;
-//   this.txtW = 0;
-//
-//   if (circleType == "sam") {
-//     if (vibhag == "tali") {
-//       this.col = frontColor;
-//       this.txtCol = backColor;
-//     } else {
-//       this.col = backColor;
-//       this.txtCol = frontColor;
-//     }
-//   } else if (vibhag == "tali") {
-//     this.col = frontColor;
-//     this.txtCol = backColor;
-//   } else if (vibhag == "khali") {
-//     this.col = backColor;
-//     this.txtCol = frontColor;
-//   }
-//
-//   if (circleType == "sam") {
-//     this.radius = strokeRadius1;
-//     this.txtSize = strokeRadius1 * 0.7;
-//     this.txtStyle = BOLD;
-//     this.bol = this.bol.toUpperCase();
-//   } else if (circleType == 1) {
-//     this.radius = strokeRadius1;
-//     this.txtSize = strokeRadius1 * 0.75;
-//     this.txtStyle = BOLD;
-//   } else if (circleType == 2){
-//     this.radius = strokeRadius2;
-//     this.txtSize = strokeRadius2 * 0.75;
-//     this.txtStyle = BOLD;
-//   } else {
-//     this.radius = strokeRadius2;
-//     this.txtSize = strokeRadius2 * 0.75;
-//     this.col = color(0, 0);
-//     this.txtCol = frontColor;
-//     this.txtStyle = NORMAL;
-//     this.strokeWeight = 0;
-//     this.txtW = 1;
-//     increment = 1.05;
-//   }
-//
-//   this.circleAngle = map(matra, 0, avart, 0, 360);
-//   this.x = talRadius * increment * cos(this.circleAngle);
-//   this.y = talRadius * increment * sin(this.circleAngle);
-//
-//   this.display = function () {
-//     push();
-//     translate(this.x, this.y);
-//     stroke(frontColor);
-//     strokeWeight(this.strokeWeight);
-//     fill(this.col);
-//     ellipse(0, 0, this.radius, this.radius);
-//     pop();
-//   }
-//
-//   this.displayTheka = function () {
-//     push();
-//     translate(this.x, this.y);
-//     textAlign(CENTER, CENTER);
-//     stroke(backColor);
-//     strokeWeight(this.txtW);
-//     fill(this.txtCol);
-//     textSize(this.txtSize);
-//     textStyle(this.txtStyle);
-//     rotate(90);
-//     text(this.bol, 0, 0);
-//     pop();
-//   }
-// }
-//
-// function CreateIcon (matra, vibhag, avart) {
-//   this.circleAngle = map(matra, 0, avart, 0, 360);
-//   this.x = talRadius * iconDistance * cos(this.circleAngle);
-//   this.y = talRadius * iconDistance * sin(this.circleAngle);
-//   if (vibhag == "tali") {
-//     this.img = clap;
-//   } else if (vibhag == "khali") {
-//     this.img = wave;
-//   }
-//
-//   this.display = function () {
-//     push();
-//     translate(this.x, this.y);
-//     rotate(90);
-//     image(this.img, 0, 0, strokeRadius2*2, strokeRadius2*2);
-//     pop();
-//   }
-// }
 
 function CreateTalBox (tal) {
   if (tal.tal[tal.tal.length-1] == 'l') {
@@ -962,7 +653,7 @@ function CreateClock () {
     textStyle(NORMAL);
     noStroke();
     fill(frontColor);
-    text(this.clock, extraSpaceW + spaceWidth/2, navBox.y1 - margin/2);
+    text(this.clock, extraSpaceW + spaceWidth/2, navBox.y1 - 5);
   }
 }
 
@@ -989,35 +680,15 @@ function player () {
     buttonPlay.html(lang_loading);
     buttonPlay.attribute("disabled", "true");
     selectMenu.attribute("disabled", "true");
-    // charger.angle = 0;
     track = loadSound("../tracks/" + trackFile, soundLoaded, failedLoad);
   }
 }
-
-// function CreateCharger () {
-//   this.angle;
-//   this.update = function () {
-//     this.angle += 1;
-//   }
-//   this.display = function () {
-//     stroke(frontColor);
-//     strokeWeight(2);
-//     noFill();
-//     arc(0, 0, talRadius, talRadius, 0, this.angle);
-//   }
-// }
 
 function soundLoaded () {
   buttonPlay.html(lang_start);
   buttonPlay.removeAttribute("disabled");
   selectMenu.removeAttribute("disabled");
   loaded = true;
-  // showTheka.removeAttribute("disabled");
-  // showTheka.attribute("style", "color:rgba(120, 0, 0);");
-  // showTal.removeAttribute("disabled");
-  // showTal.attribute("style", "color:rgba(120, 0, 0);");
-  // showCursor.removeAttribute("disabled");
-  // showCursor.attribute("style", "color:rgba(120, 0, 0);");
   var endLoading = millis();
   print("Track loaded in " + (endLoading-initLoading)/1000 + " seconds");
 }
@@ -1025,27 +696,26 @@ function soundLoaded () {
 function failedLoad () {
   print("Loading failed");
   failedLoading = true;
-  // charger.angle = undefined;
 }
 
-function fillMelodicLineColor (phrases) {
-  var phrase_i = 0;
-  var phrase = phrases[phrase_i];
-  var pointColor = 0;
-  for (var i = 0; i < trackDuration * 100; i++) {
-    var t = i / 100;
-    if (t == phrase.s) {
-      pointColor = 1;
-    } else if (t == phrase.e) {
-      pointColor = 0;
-      phrase_i++;
-      if (phrase_i < phrases.length) {
-        phrase = phrases[phrase_i];
-      }
-    }
-    melodicLineColor[t] = pointColor;
-  }
-}
+// function fillMelodicLineColor (phrases) {
+//   var phrase_i = 0;
+//   var phrase = phrases[phrase_i];
+//   var pointColor = 0;
+//   for (var i = 0; i < trackDuration * 100; i++) {
+//     var t = i / 100;
+//     if (t == phrase.s) {
+//       pointColor = 1;
+//     } else if (t == phrase.e) {
+//       pointColor = 0;
+//       phrase_i++;
+//       if (phrase_i < phrases.length) {
+//         phrase = phrases[phrase_i];
+//       }
+//     }
+//     phrasesTimestamps[t] = pointColor;
+//   }
+// }
 
 function mouseClicked () {
   if (loaded) {
