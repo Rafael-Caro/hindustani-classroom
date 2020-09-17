@@ -4,7 +4,7 @@ var spaceWidth = 870;
 var spaceHeight = 600;
 var title_x = 20;
 var title_y = 20;
-var title_size = 20;
+var title_size = 25;
 var easing = 0.5;
 var backColor;
 var backColorTrans;
@@ -29,6 +29,7 @@ var pitchTrack;
 var phrasesTimestamps = [];
 var phraseVerticalNumber = 15;
 var phraseH = (spaceHeight - 20) / phraseVerticalNumber;
+var phrasesWindowMargin = 15;
 var trackFile;
 var track;
 var trackDuration;
@@ -195,6 +196,12 @@ function draw () {
   textSize(title_size*0.9);
   fill(0, 150);
   text(" - " + artist, extraSpaceW + title_x + ragW, extraSpaceH + title_y + title_size);
+
+  stroke(frontColor);
+  strokeWeight(2);
+  noFill();
+  rect(phrasesWindowMargin/2, extraSpaceH+10,
+       extraSpaceW-phrasesWindowMargin/2, spaceHeight-20, 10);
 
   for (var i = 0; i < svaraList.length; i++) {
     svaraList[i].displayLines();
@@ -519,7 +526,7 @@ function CreateSvara (svara, cents, vadi, samvadi, key) {
 }
 
 function CreatePhrase (phrase, label, index, total) {
-  this.x = 10 + (extraSpaceW-10)/2 * int(index/phraseVerticalNumber);
+  this.x = phrasesWindowMargin + (extraSpaceW-phrasesWindowMargin)/2 * int(index/phraseVerticalNumber);
   this.h = phraseH * 0.65;
   this.center = extraSpaceH + 10 + phraseH/2 + (phraseH * (index % phraseVerticalNumber));
   this.y = this.center - this.h/2;
