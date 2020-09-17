@@ -212,8 +212,9 @@ function draw () {
 
   navBox.displayBack();
 
+  navCursor.update();
+  
   if (loaded) {
-    navCursor.update();
     clock.display();
 
     if (!paused) {
@@ -281,6 +282,7 @@ function start () {
   paused = true;
   loaded = false;
   currentTime = 0;
+  jump = undefined;
   talBoxes = [];
   talList = [];
   // talName = undefined;
