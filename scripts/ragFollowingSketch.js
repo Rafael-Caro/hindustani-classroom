@@ -10,19 +10,17 @@ var shadeColor;
 
 var recordingsInfo;
 var recordingsList;
+var ragInfo;
 var pitchSpace;
 var svaraList = [];
 var soundList = {};
-var svaraRadius1 = 20;
-var svaraRadius2 = 17;
+var svaraRadius = 20;
 var svaraLine = 50;
-var minHz;
-var maxHz;
 var pitchTrack;
 var trackFile;
 var track;
 var trackDuration;
-var rag;
+var ragName;
 var artist;
 var link;
 
@@ -41,6 +39,7 @@ var navBox;
 var navCursorW = 4;
 var samList = [];
 var melCursorX;
+var melCursorRadius = 6;
 var clock;
 var mpmTxt;
 
@@ -74,9 +73,17 @@ var lang_pause;
 var lang_continue;
 var lang_loading;
 
+var svaras = "SrRgGmMPdDnN";
+var svarasDic = {"S": "Sa", "r": "Re", "R": "Re", "g": "Ga", "G": "Ga", "m": "Ma", "M": "Ma", "P": "Pa", "d": "Dha",
+                 "D": "Dha", "n": "Ni", "N": "Ni"};
+var octave0 = "qwertyuiop";
+var octave1 = "asdfghjkl;";
+var octave2 = "zxcvbnm,./";
+
 function preload() {
   recordingsList = loadJSON("../files/ragFollowing-recordingsList.json");
   recordingsInfo = loadJSON("../files/recordingsInfo.json");
+  ragInfo = loadJSON("../files/ragInfo.json");
   talInfo = loadJSON("../files/talInfo.json");
   wave = loadImage("../images/wave.svg");
   clap = loadImage("../images/clap.svg");
@@ -107,7 +114,7 @@ function setup () {
   navCursor = new CreateNavCursor();
   talCursor = new CreateTalCursor();
 
-  cursorTop = extraSpaceH + margin*7 + 50;
+  cursorTop = extraSpaceH + margin*6 + 15 + svaraRadius*2;
   cursorBottom = navBox.y1-margin*4;
   talX = extraSpaceW + margin + (mainSpace-2*margin)/3;
   talY = cursorTop + (cursorBottom-cursorTop)/2.8 + strokeRadius1/2;
@@ -136,7 +143,7 @@ function setup () {
   }
 
   infoLink = select("#sa-info-link");
-  infoLink.position(width-60, extraSpaceH + margin*3.5 + 30);
+  infoLink.position(width - margin - 45, extraSpaceH + margin);
   selectMenu = createSelect()
     .size(120, 25)
     .position(margin, margin)
@@ -195,18 +202,18 @@ function draw () {
   strokeWeight(5);
   stroke(frontColor);
   fill(backColor);
-  text(rag, extraSpaceW + mainSpace/2, extraSpaceH + margin*3);
+  text(ragName, extraSpaceW + mainSpace/2, extraSpaceH + margin*2);
 
   stroke(0, 50);
   strokeWeight(1);
-  line(extraSpaceW + margin*2, extraSpaceH + margin*3 + 30, width - margin*2, extraSpaceH + margin*3 + 30);
+  line(extraSpaceW + margin*2, extraSpaceH + margin*2 + 30, width - margin*2, extraSpaceH + margin*2 + 30);
 
   textAlign(CENTER, TOP);
   stroke(0, 150);
   strokeWeight(1);
   textSize(20);
   fill(0, 150);
-  text(artist, extraSpaceW + mainSpace/2, extraSpaceH + margin*4 + 30);
+  text(artist, extraSpaceW + mainSpace/2, extraSpaceH + margin*3 + 30);
 
   // stroke("red");
   // line(0, cursorTop, width, cursorTop);
@@ -233,13 +240,13 @@ function draw () {
 
     var x = str(currentTime.toFixed(2));
     var p = pitchTrack[x];
-    if (p != "s" && p >= minHz && p <= maxHz && showCursor.checked()) {
-      var targetY = map(p, minHz, maxHz, cursorBottom, cursorTop);
+    if (p != "s" && p >= -700 && p <= 1900 && showCursor.checked()) {
+      var targetY = map(p, -700, 1900, cursorBottom, cursorTop);
       cursorY += (targetY - cursorY) * easing;
-      fill("red");
+      fill(255);
       stroke(frontColor);
       strokeWeight(1);
-      ellipse(melCursorX, cursorY, 5, 5);
+      ellipse(melCursorX, cursorY, melCursorRadius, melCursorRadius);
     }
   }
 
@@ -332,23 +339,70 @@ function start () {
   mpmTxt = undefined;
   var currentRecording = recordingsInfo[recordingsList[selectMenu.value()].mbid];
   trackFile = currentRecording.info.trackFile;
-  rag = currentRecording.rag.name + " " + currentRecording.rag.nameTrans;
+  var rag = ragInfo[currentRecording.rag.rag];
+  var sa = currentRecording.rag.sa;
+  var intonation = currentRecording.rag.intonation;
+  ragName = rag.name + " " + rag.nameTrans;
   artist = currentRecording.info.artist;
   link = currentRecording.info.link;
   infoLink.attribute("href", link)
     .html("+info");
   trackDuration = currentRecording.info.duration;
-  pitchSpace = currentRecording.rag.pitchSpace;
-  minHz = pitchSpace[0].cent-100;
-  maxHz = pitchSpace[pitchSpace.length-1].cent+100;
+  pitchSpace = rag.pitchSpace;
   svaraList = [];
   soundList = {};
+  var key;
+  var keyIndex = 0;
   for (var i = 0; i < pitchSpace.length; i++) {
-    var svara = new CreateSvara(pitchSpace[i]);
-    svaraList.push(svara);
-    createSound(pitchSpace[i]);
+    var svaraName = pitchSpace[i];
+    var svaraIndex = svaras.search(svaraName);
+    if (svaraIndex >= 5) {
+      var cents = svaraIndex * 100 - 1200;
+      var peak = intonation[svaraName+"0"];
+      if (peak != undefined) {
+        key = octave0[keyIndex];
+        createSound(cents, sa, key);
+        keyIndex++
+      } else {
+        key = "";
+      }
+      var svara = new CreateSvara(svaraName, cents, rag.vadi, rag.samvadi, key);
+      svaraList.push(svara);
+    }
   }
-  // pitchTrack = currentRecording.rag.pitchTrack;
+  var keyIndex = 0;
+  for (var i = 0; i < pitchSpace.length; i++) {
+    var svaraName = pitchSpace[i];
+    var cents = svaras.search(svaraName) * 100;
+    var peak = intonation[svaraName+"1"];
+    if (peak != undefined) {
+      key = octave1[keyIndex];
+      createSound(cents, sa, key);
+      keyIndex++
+    } else {
+      key = "";
+    }
+    var svara = new CreateSvara(svaraName, cents, rag.vadi, rag.samvadi, key);
+    svaraList.push(svara);
+  }
+  var keyIndex = 0;
+  for (var i = 0; i < pitchSpace.length; i++) {
+    var svaraName = pitchSpace[i];
+    var svaraIndex = svaras.search(svaraName);
+    if (svaraIndex <= 7) {
+      var cents = svaraIndex * 100 + 1200;
+      var peak = intonation[svaraName+"2"];
+      if (peak != undefined) {
+        key = octave2[keyIndex];
+        createSound(cents, sa, key);
+        keyIndex++
+      } else {
+        key = "";
+      }
+      var svara = new CreateSvara(svaraName, cents, rag.vadi, rag.samvadi, key);
+      svaraList.push(svara);
+    }
+  }
   pitchTrack = loadJSON('../files/pitchTracks/'+recordingsList[selectMenu.value()].mbid+'_pitchTrack.json');
   for (var i = 0; i < currentRecording.talList.length; i++) {
     var tal = currentRecording.talList[i];
@@ -458,35 +512,34 @@ function CreateNavCursor () {
   }
 }
 
-function CreateSvara (svara) {
-  this.x1 = melCursorX;
-  this.y = map(svara.cent, minHz, maxHz, cursorBottom, cursorTop);
-  this.name = svara.svara;
-  this.key = svara.key;
+function CreateSvara (svara, cents, vadi, samvadi, key) {
+  this.y = map(cents, -700, 1900, cursorBottom, cursorTop);
+  this.name = svarasDic[svara];
+  this.key = key;
   this.function = svara.function;
-  if (this.function == "sadja") {
-    this.radius = svaraRadius1;
+  if (svara == "S") {
+    // this.radius = svaraRadius1;
     this.extraX = 20;
     this.col = frontColor;
     this.strokeW = 4;
     this.lineW = 4;
     this.txtCol = backColor;
-  } else if (this.function == "vadi") {
-    this.radius = svaraRadius1;
+  } else if (svara == vadi) {
+    // this.radius = svaraRadius1;
     this.extraX = 0;
     this.col = backColor;
     this.strokeW = 4;
     this.lineW = 2;
     this.txtCol = frontColor;
-  } else if (this.function == "samvadi") {
-    this.radius = svaraRadius2;
+  } else if (svara == samvadi) {
+    // this.radius = svaraRadius2;
     this.extraX = 0;
     this.col = backColor;
     this.strokeW = 2;
     this.lineW = 2;
     this.txtCol = frontColor;
   } else {
-    this.radius = svaraRadius2;
+    // this.radius = svaraRadius2;
     this.extraX = 0;
     this.col = color(0, 0);
     this.strokeW = 0;
@@ -500,42 +553,42 @@ function CreateSvara (svara) {
   } else {
     this.position = 0;
   }
-  this.x2 = this.x1 + svaraLine/2 + (svaraRadius1*2 + margin) * this.position;
+
+  this.x2 = melCursorX + svaraLine/2 + (svaraRadius*2 + margin) * this.position;
 
   this.displayLines = function () {
     stroke(frontColor);
     strokeWeight(this.lineW);
-    line(this.x1-svaraLine/2-this.extraX, this.y, this.x2, this.y)
+    line(melCursorX-svaraLine/2-this.extraX, this.y, this.x2, this.y)
   }
 
   this.displaySvara = function () {
     stroke(frontColor);
     strokeWeight(this.strokeW);
     fill(this.col);
-    ellipse(this.x2 + svaraRadius1, this.y, svaraRadius1, svaraRadius1);
+    ellipse(this.x2 + svaraRadius, this.y, svaraRadius, svaraRadius);
 
     textAlign(CENTER, CENTER);
     noStroke();
-    textSize(svaraRadius1*0.9);//this.radius*0.9);
+    textSize(svaraRadius*0.9);//this.radius*0.9);
     textStyle(BOLD);//this.txtStyle);
     fill(this.txtCol);
-    text(this.name, this.x2 + svaraRadius1, this.y+this.radius*0.1);
+    text(this.name, this.x2 + svaraRadius, this.y+svaraRadius*0.1);
     stroke(frontColor);
     strokeWeight(3);
     fill(backColor);
-    textSize(svaraRadius1*0.7);
+    textSize(svaraRadius*0.7);
     textStyle(NORMAL);
-    text(this.key, this.x2 + svaraRadius1 + textWidth(this.name), this.y + (svaraRadius1*0.9)/2)
+    text(this.key, this.x2 + svaraRadius + textWidth(this.name), this.y + (svaraRadius*0.9)/2)
   }
 }
 
-function createSound (svara) {
-  this.pitch = svara.pitch;
-  this.key = svara.key;
+function createSound (cents, sa, key) {
+  this.pitch = sa * (2 ** (cents/1200.));
   this.osc = new p5.Oscillator();
   this.osc.setType("sawtooth");
   this.osc.freq(this.pitch);
-  soundList[this.key] = this.osc;
+  soundList[key] = this.osc;
 }
 
 function CreateTalCursor () {
