@@ -432,8 +432,6 @@ function CreateNavCursor () {
       var talBox = talBoxes[i];
       if (this.x > talBox.x1 && this.x < talBox.x2) {
         talBox.on();
-        // currentTal = talBox.talIndex;
-        // talName = talBox.fullName;
         noTal = false;
       } else {
         talBox.off();
@@ -612,8 +610,10 @@ function CreatePhrase (phrase, label, index, total) {
 function CreatePhraseBox (start, end) {
   this.start = start;
   this.end = end;
-  this.x1 = map(this.start, 0, trackDuration, navBox.x1, navBox.x2);
-  this.x2 = map(this.end, 0, trackDuration, navBox.x1, navBox.x2);
+  this.x1 = map(this.start, 0, trackDuration,
+                navBox.x1+navCursorW/2, navBox.x2-navCursorW/2);
+  this.x2 = map(this.end, 0, trackDuration,
+                navBox.x1+navCursorW/2, navBox.x2-navCursorW/2);
   this.w = this.x2 - this.x1;
   this.y1 = navBox.y1 + navBoxH / 2 + 2;
   this.y2 = navBox.y2 - 1;
