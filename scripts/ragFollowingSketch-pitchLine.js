@@ -1,6 +1,6 @@
 var extraSpaceH = 45;
-var extraSpaceW = 0;
-var spaceWidth = 1070;
+var extraSpaceW = 200;
+var spaceWidth = 870;
 var spaceHeight = 600;
 var margin = 10;
 var easing = 0.5;
@@ -90,12 +90,10 @@ var octave1 = "asdfghjkl;";
 var octave2 = "zxcvbnm,./";
 
 function preload() {
-  recordingsList = loadJSON("../files/ragFollowing-recordingsList.json");
+  recordingsList = loadJSON("../files/ragFollowing-pitchLine-recordingsList.json");
   recordingsInfo = loadJSON("../files/recordingsInfo.json");
   ragInfo = loadJSON("../files/ragInfo.json");
   talInfo = loadJSON("../files/talInfo.json");
-  // wave = loadImage("../images/wave.svg");
-  // clap = loadImage("../images/clap.svg");
 }
 
 function setup () {
