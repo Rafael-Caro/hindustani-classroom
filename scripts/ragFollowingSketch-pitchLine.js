@@ -17,7 +17,7 @@ var ragInfo;
 var pitchSpace;
 var svaraList = [];
 var soundList = {};
-var phrases = [];
+var phrasesList = [];
 var currentPhrase;
 var phraseIndex = 0;
 var svaraRadius = 20;
@@ -27,6 +27,8 @@ var svaraLine = 20;
 var pitchTrack;
 // var melodicLine = {};
 var phrasesTimestamps = [];
+var phraseVerticalNumber = 15;
+var phraseH = (spaceHeight - 20) / phraseVerticalNumber;
 var trackFile;
 var track;
 var trackDuration;
@@ -171,7 +173,7 @@ function setup () {
 function draw () {
   fill(backColor);
   noStroke();
-  rect(extraSpaceW, extraSpaceH, width, height);
+  rect(0, extraSpaceH, width, height);
 
   textAlign(LEFT, BOTTOM);
   textStyle(NORMAL);
@@ -266,6 +268,11 @@ function draw () {
     talBoxes[i].display();
   }
 
+  for (var i = 0; i < phrasesList.length; i++) {
+    phrasesList[i].update();
+    phrasesList[i].display();
+  }
+
   textAlign(RIGHT, BOTTOM);
   textSize(12);
   textStyle(NORMAL);
@@ -294,6 +301,7 @@ function start () {
   phrasesTimestamps = [];
   svaraList = [];
   soundList = {};
+  phrasesList = [];
 
   var currentRecording = recordingsInfo[recordingsList[selectMenu.value()].mbid];
   trackFile = currentRecording.info.trackFile;
@@ -364,6 +372,7 @@ function start () {
   if (labels.length > 0) {
     for (var i = 0; i < labels.length; i++) {
       var phrase = new CreatePhrase(phrases[labels[i]], labels[i], i, labels.length);
+      phrasesList.push(phrase);
     }
   }
 
@@ -570,20 +579,84 @@ function CreateSvara (svara, cents, vadi, samvadi, key) {
 }
 
 function CreatePhrase (phrase, label, index, total) {
+  this.x = 10 + (extraSpaceW-10)/2 * int(index/phraseVerticalNumber);
+  this.h = phraseH * 0.65;
+  this.center = extraSpaceH + 10 + phraseH/2 + (phraseH * (index % phraseVerticalNumber));
+  this.y = this.center - this.h/2;
+  this.w = (extraSpaceW-30)/2;
   this.label = label;
   this.index = index;
+  this.fill;
+  this.stroke;
+  this.strokeWeight;
+  this.lfill;
+  this.bold;
   this.phraseBoxes = [];
   for (var i = 0; i < phrase.length; i++) {
-    var s = phrase[i].s;
-    var e = phrase[i].e;
-    for(var i = s; i <= e; i+=0.01) {
+    var start = phrase[i].s;
+    var end = phrase[i].e;
+    for(var i = start; i <= end; i+=0.01) {
       phrasesTimestamps.push(i.toFixed(2));
     }
+    var phraseBox = new CreatePhraseBox(start, end);
+    this.phraseBoxes.push(phraseBox);
+  }
+
+  this.update = function () {
+    for (var i = 0; i < this.phraseBoxes.length; i++) {
+      var s = this.phraseBoxes[i].start;
+      var e = this.phraseBoxes[i].end;
+      if (currentTime >= s && currentTime <= e) {
+        this.fill = color(255, 230);
+        this.stroke = frontColor;
+        this.strokeWeight = 2;
+        this.lfill = frontColor;
+        this.bold = true;
+      } else {
+        this.fill = color(255, 50);
+        this.stroke = color(150);
+        this.strokeWeight = 1;
+        this.lfill = color(30);
+        this.bold = false;
+      }
+    }
+  }
+
+  this.display = function () {
+    stroke(this.stroke);
+    strokeWeight(this.strokeWeight);
+    fill(this.fill);
+    rect(this.x, this.y, this.w, this.h, 10, 10, 10, 10);
+    textAlign(CENTER, CENTER);
+    textStyle(NORMAL);
+    if (this.bold) {
+      stroke(this.lfill);
+      strokeWeight(1);
+    } else {
+      noStroke();
+    }
+    textSize(phraseH * 0.35);
+    fill(this.lfill);
+    text(this.label, this.x+this.w/2, this.center+phraseH*0.1);
   }
 }
 
-function CreatePhraseBox (x, y) {
+function CreatePhraseBox (start, end) {
+  this.start = start;
+  this.end = end;
+  this.x1 = map(this.start, 0, trackDuration, navBox.x1, navBox.x2);
+  this.x2 = map(this.end, 0, trackDuration, navBox.x1, navBox.x2);
+  this.w = this.x2 - this.x1;
+  this.y1 = navBox.y1 + navBoxH / 4;
+  this.y2 = navBox.y2 - navBoxH / 4;
+  this.h = this.y2 - this.y1;
 
+  this.display = function () {
+    stroke(255, 0, 0);
+    strokeWeight(1);
+    fill(255, 100);
+    rect(this.x1, this.y1, this.w, this.h);
+  }
 }
 
 function createSound (cents, sa, key) {
