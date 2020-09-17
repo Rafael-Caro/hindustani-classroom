@@ -207,25 +207,7 @@ function draw () {
 
   if (loaded) {
     navCursor.update();
-    navCursor.display();
     clock.display();
-
-    // if (currentPhrase == undefined) {
-    //   noFill();
-    // } else {
-    //   fill(255, 150);
-    // }
-    // stroke(frontColor);
-    // strokeWeight(2);
-    // rect(extraSpaceW + spaceWidth/2 - 40, extraSpaceH + 70, 80, 30, 20);
-
-    // textAlign(CENTER, TOP);
-    // textStyle(NORMAL);
-    // textSize(15);
-    // fill(0, 150);
-    // stroke(0, 150);
-    // strokeWeight(1);
-    // text(currentPhrase, extraSpaceW + spaceWidth/2, extraSpaceH + 80);
 
     if (!paused) {
       currentTime = track.currentTime();
@@ -272,6 +254,8 @@ function draw () {
     phrasesList[i].update();
     phrasesList[i].display();
   }
+
+  navCursor.display();
 
   textAlign(RIGHT, BOTTOM);
   textSize(12);
@@ -565,16 +549,22 @@ function CreatePhrase (phrase, label, index, total) {
     for (var i = 0; i < this.phraseBoxes.length; i++) {
       var s = this.phraseBoxes[i].start;
       var e = this.phraseBoxes[i].end;
-      if ((currentTime >= s && currentTime <= e) || this.selected) {
+      if (currentTime >= s && currentTime <= e) {
         this.fill = color(255, 230);
         this.stroke = frontColor;
         this.strokeWeight = 2;
         this.lfill = frontColor;
         this.bold = true;
+        break;
       } else {
         this.fill = color(255, 50);
-        this.stroke = color(150);
-        this.strokeWeight = 1;
+        if (this.selected) {
+          this.stroke = frontColor;
+          this.strokeWeight = 2;
+        } else {
+          this.stroke = color(150);
+          this.strokeWeight = 1;
+        }
         this.lfill = color(30);
         this.bold = false;
       }
