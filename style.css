@@ -60,8 +60,18 @@ h2 {
   padding-bottom: 1em;
 }
 
+#phrases-title {
+  padding: 0;
+}
+
 h3 {
   padding: 10px 0px 10px;
+}
+
+#phrases-subtitle {
+  text-align: center;
+  padding-top: 0.25em;
+  padding-bottom: 1em;
 }
 
 p {
@@ -112,7 +122,6 @@ img {
 
 section {
   background-color: white;
-  width: 900px;
   margin: 2px auto;
   padding: 10px 30px;
   height: 100%;
